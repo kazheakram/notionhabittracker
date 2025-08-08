@@ -19,7 +19,7 @@
             width: 100%; /* Take 100% of available space */
             height: 100%; /* Take 100% of available space */
             overflow: hidden; /* Hide any overflow on the document itself */
-            display: flex; /* Use flexbox to center content */
+            display: flex; /* Use flexbox to center content if needed */
             justify-content: center; /* Center horizontally */
             align-items: flex-start; /* Align content to the top */
             background: transparent; /* Make body background transparent so Notion's background shows through */
@@ -39,13 +39,14 @@
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
             padding: 35px 40px; /* Default wide screen padding */
             max-width: 850px;
-            width: calc(100% - 40px); /* Adjust width to account for a consistent margin on wider views */
+            width: 100%; /* Ensure it takes full width up to max-width */
             display: grid;
             grid-template-columns: 1fr 280px; /* Default wide screen layout */
             gap: 60px;
-            margin: 20px auto; /* Centered margin for general desktop view */
+            margin: 20px; /* Add some margin around the container for general desktop view */
             overflow: hidden; /* Ensure content inside container doesn't overflow itself */
-            min-width: 280px; /* A reasonable minimum width to prevent layout breaking too early before media query */
+            /* Add min-width to avoid collapsing too much on its own */
+            min-width: 300px; /* A reasonable minimum width to prevent layout breaking too early */
         }
         h1 {
             font-weight: 700;
@@ -220,66 +221,50 @@
 
         /* --- Responsive adjustments for Notion embeds and small screens --- */
         /* This media query will be the primary one for Notion embeds */
-        /* Use a more fluid max-width, or remove max-width to let it shrink more */
-        @media (max-width: 550px) { /* Adjust this breakpoint as needed for your specific Notion embed size */
+        @media (max-width: 550px) { /* Adjusted breakpoint slightly for more flexibility */
             .container {
                 grid-template-columns: 1fr; /* Force single column layout */
-                gap: 15px; /* Even smaller gap */
-                padding: 10px; /* Reduced padding for minimal space */
+                gap: 20px; /* Even smaller gap */
+                padding: 15px; /* Uniform padding on all sides */
                 margin: 0; /* No margin inside the embed */
                 border-radius: 0; /* Optional: remove rounded corners */
                 box-shadow: none; /* Optional: remove shadow */
                 min-width: unset; /* Allow container to shrink as much as possible */
-                width: 100%; /* Take full width of parent iframe */
             }
             .right-panel {
                 flex-direction: column; /* Ensure right panel items stack vertically */
                 flex-wrap: nowrap;
                 justify-content: center;
                 align-items: center;
-                gap: 10px; /* Adjusted gap for stacked right panel */
+                gap: 15px;
             }
             .date-box, .best-streak {
-                width: calc(100% - 20px); /* Take 100% width minus a small padding */
-                max-width: 200px; /* Keep a max-width if parent is very wide */
-                padding: 8px 15px; /* Reduced padding for compact look */
-                font-size: 0.9rem; /* Smaller font for small boxes */
+                width: 100%;
+                max-width: 200px; /* Make these even narrower if needed */
             }
             .streak-ring {
-                width: 100px; /* Make ring even smaller for very narrow views */
-                height: 100px;
+                width: 120px;
+                height: 120px;
             }
             #streakText {
-                font-size: 0.8rem; /* Adjust text size inside smaller ring */
+                font-size: 0.9rem;
             }
             .add-section {
-                flex-direction: column; /* Always stack input and button */
-                gap: 8px; /* Reduced gap */
+                flex-direction: column;
+                gap: 10px;
             }
             .add-section input, .add-section button {
                 width: 100%;
-                padding: 10px 12px; /* Smaller padding for input/button */
-                font-size: 0.9rem;
             }
             h1 {
-                font-size: 1.3rem; /* Smaller header */
-                margin-bottom: 15px;
+                font-size: 1.5rem;
+                margin-bottom: 20px;
             }
             h1 span {
-                font-size: 1.5rem;
+                font-size: 1.7rem;
             }
             .habit span {
-                font-size: 0.95rem; /* Smaller habit text */
-            }
-            .habit input[type="checkbox"] {
-                width: 20px; /* Smaller checkbox */
-                height: 20px;
-            }
-            .habit input[type="checkbox"]:checked::after {
-                font-size: 14px;
-            }
-            .delete-btn {
-                font-size: 18px; /* Smaller delete button */
+                font-size: 1rem;
             }
         }
 
@@ -289,7 +274,7 @@
                 grid-template-columns: 1fr;
                 gap: 30px;
                 padding: 20px 25px;
-                margin: 15px auto; /* Centered margin */
+                margin: 15px;
             }
             .right-panel {
                 flex-direction: row;
