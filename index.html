@@ -155,24 +155,39 @@
             color: #555; /* Softer text color */
             width: 100%; /* Ensure they take full width in the panel */
         }
+
+        /* Streak Ring with Animated Border */
         .streak-ring {
             width: 160px; /* Slightly larger ring */
             height: 160px; /* Slightly larger ring */
             border-radius: 50%;
-            /* Initial border is 0px, but transparent color */
-            border: 0px solid transparent; 
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 600;
             font-size: 1.1rem; /* Slightly larger text inside ring */
             color: black; /* Text color always visible */
-            transition: border-width 0.5s ease-out, border-color 0.5s ease-out; /* Animate border-width and color */
+            position: relative; /* Needed for pseudo-element positioning */
+            z-index: 1; /* Ensure text is above pseudo-element */
+            /* No direct border here anymore */
         }
 
-        .streak-ring.visible {
-            border-width: 12px; /* Animate to full border width */
-            border-color: #ff9db4; /* Animate to pink border color */
+        .streak-ring::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 12px solid #ff9db4; /* This is the pink border */
+            transform: scale(0); /* Initially scaled to 0 */
+            transition: transform 0.5s ease-out; /* Animate the scale */
+            z-index: -1; /* Place behind the text */
+        }
+
+        .streak-ring.visible::before {
+            transform: scale(1); /* Animate to full size when visible */
         }
 
         /* Responsive adjustments */
@@ -242,7 +257,7 @@
             document.getElementById('streakRing').textContent = `${streak} days streak`;
             document.getElementById('bestStreakBox').textContent = `Your best streak is ${bestStreak} days`;
 
-            // Streak ring visibility logic (unchanged from previous fix)
+            // Streak ring visibility logic (controlling the 'visible' class)
             const streakRing = document.getElementById('streakRing');
             const allHabitsCompleted = habits.length > 0 && habits.every(habit => habit.checked);
 
@@ -294,20 +309,18 @@
                 // If any habit is unchecked, and the streak was 1 (meaning it was just completed today),
                 // or if it was already more than 0 but not fully completed for today,
                 // then reset streak to 0 for current day's progress.
-                // This prevents it from immediately showing 1 if you uncheck something.
-                 if (lastDate === today) { // Only reset if it's the current day's progress
-                    // Don't reset if it's a multi-day streak and you just unchecked one habit.
-                    // This scenario is tricky: a streak should only break if ALL habits weren't checked at end of DAY.
-                    // For immediate feedback, we just want to ensure it doesn't *claim* a streak for today if not all done.
+                // This scenario is tricky: a streak should only break if ALL habits weren't checked at end of DAY.
+                // For immediate feedback, we just want to ensure it doesn't *claim* a streak for today if not all done.
+                 if (lastDate === today && streak === 1) { // If it's today and we just had a 1-day streak
+                     streak = 0; // Reset it if a habit becomes unchecked
+                     localStorage.setItem('streak', streak);
+                     // renderHabits will be called by saveHabits
                  }
             }
-            // The `renderHabits()` call in `saveHabits()` will update the display.
         }
 
         function saveHabits() {
             localStorage.setItem('habits', JSON.stringify(habits));
-            // Only update streak in localStorage here if it was set by `checkStreak` (new day)
-            // or by the immediate update logic in `toggleHabit` for today's first completion.
             localStorage.setItem('streak', streak); 
             localStorage.setItem('bestStreak', bestStreak);
             renderHabits(); // Always re-render to reflect changes
@@ -317,6 +330,8 @@
         // if user checks/unchecks habits repeatedly after initial completion.
         function streakHasBeenIncrementedToday() {
              const today = new Date().toDateString();
+             // Check if lastDate is today and streak is already at least 1,
+             // meaning a streak was registered for today.
              return localStorage.getItem('lastDate') === today && parseInt(localStorage.getItem('streak') || '0') >= 1;
         }
 
@@ -347,9 +362,9 @@
                 // correctly reflects whether all habits are currently checked.
                 // This prevents streak from being 0 if you refresh mid-day after completing some habits.
                 const allHabitsCompletedForToday = habits.length > 0 && habits.every(habit => habit.checked);
-                if (allHabitsCompletedForToday && streak === 0 && !streakHasBeenIncrementedToday()) {
+                if (allHabitsCompletedForToday && streak === 0) {
                      // This path handles the initial 0 to 1 increment if the page is refreshed after completion
-                     // but before the 'next day' streak logic kicks in.
+                     // but before the 'next day' streak logic kicks in, and the streak was somehow 0.
                     streak = 1;
                     if (streak > bestStreak) bestStreak = streak;
                     localStorage.setItem('streak', streak);
