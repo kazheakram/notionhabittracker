@@ -117,18 +117,38 @@
       text-align: center;
       font-size: 1rem;
     }
-    .streak-ring {
+
+    /* Donut ring styles */
+    .streak-ring-container {
+      position: relative;
       width: 140px;
       height: 140px;
-      border-radius: 50%;
-      border: 10px solid #f8a9b6;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      font-size: 1rem;
-      color: black;
     }
+    .streak-ring {
+      transform: rotate(-90deg);
+    }
+    .ring-bg {
+      fill: none;
+      stroke: #f2f2f2;
+      stroke-width: 10;
+    }
+    .ring-progress {
+      fill: none;
+      stroke: #f8a9b6;
+      stroke-width: 10;
+      stroke-linecap: round;
+      stroke-dasharray: 377; /* circumference for r=60 */
+      stroke-dashoffset: 377;
+      transition: stroke-dashoffset 1s ease-in-out;
+    }
+    .streak-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-weight: 600;
+    }
+
     @media (max-width: 700px) {
       .container {
         grid-template-columns: 1fr;
@@ -158,11 +178,21 @@
     <div class="right-panel">
       <div class="date-box" id="dateBox"></div>
       <div class="best-streak" id="bestStreakBox">Your best streak is 0 days</div>
-      <div class="streak-ring" id="streakRing">0 days streak</div>
+      
+      <!-- Donut progress ring -->
+      <div class="streak-ring-container" id="streakContainer" style="display:none;">
+        <svg class="streak-ring" width="140" height="140">
+          <circle class="ring-bg" cx="70" cy="70" r="60"/>
+          <circle class="ring-progress" cx="70" cy="70" r="60"/>
+        </svg>
+        <div class="streak-text" id="streakText">0 days streak</div>
+      </div>
     </div>
   </div>
 
   <script>
+    // localStorage.removeItem('bestStreak'); // Uncomment to reset best streak permanently
+
     let habits = JSON.parse(localStorage.getItem('habits') || '[]');
     let streak = parseInt(localStorage.getItem('streak') || '0');
     let bestStreak = parseInt(localStorage.getItem('bestStreak') || '0');
@@ -181,8 +211,8 @@
         `;
         habitList.appendChild(habitDiv);
       });
-      document.getElementById('streakRing').textContent = `${streak} days streak`;
       document.getElementById('bestStreakBox').textContent = `Your best streak is ${bestStreak} days`;
+      updateRing();
     }
 
     function addHabit() {
@@ -203,6 +233,11 @@
     function toggleHabit(index) {
       habits[index].checked = !habits[index].checked;
       saveHabits();
+
+      if (habits.every(h => h.checked)) {
+        // All habits done for today
+        updateRing();
+      }
     }
 
     function saveHabits() {
@@ -226,6 +261,28 @@
         localStorage.setItem('lastDate', lastDate);
         saveHabits();
       }
+    }
+
+    function updateRing() {
+      const container = document.getElementById('streakContainer');
+      const text = document.getElementById('streakText');
+      const progressCircle = document.querySelector('.ring-progress');
+
+      if (streak === 0) {
+        container.style.display = 'none';
+        return;
+      }
+
+      container.style.display = 'block';
+      text.textContent = `${streak} days streak`;
+
+      const circumference = 2 * Math.PI * 60;
+      const progress = bestStreak > 0 ? (streak / bestStreak) : 1;
+      const offset = circumference - (progress * circumference);
+      
+      requestAnimationFrame(() => {
+        progressCircle.style.strokeDashoffset = offset;
+      });
     }
 
     document.getElementById('dateBox').textContent = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
