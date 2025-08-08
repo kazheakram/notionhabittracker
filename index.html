@@ -2,169 +2,174 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Habit Tracker Widget</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notion Habit Tracker</title>
 <style>
     body {
-        font-family: 'Poppins', sans-serif;
+        font-family: Arial, sans-serif;
         background: white;
-        color: #333;
         display: flex;
-        flex-direction: column;
+        justify-content: center;
         align-items: center;
+        height: 100vh;
         margin: 0;
-        padding: 20px;
     }
-
-    h1 {
-        font-weight: 600;
-        margin-bottom: 10px;
+    .widget {
+        background: white;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        width: 320px;
+    }
+    .header {
         display: flex;
         align-items: center;
-        gap: 10px;
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
     }
-
-    h1 img {
-        height: 30px;
+    .header span {
+        margin-left: 8px;
     }
-
+    .bow {
+        font-size: 24px;
+    }
+    .date-box, .streak-box {
+        border: 2px solid #ccc;
+        border-radius: 10px;
+        padding: 10px;
+        text-align: center;
+        margin: 10px 0;
+    }
     .habit {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        background: #ffeaf5;
-        padding: 10px 15px;
-        border-radius: 10px;
-        width: 280px;
-        margin: 6px 0;
+        margin: 8px 0;
     }
-
     input[type="checkbox"] {
-        accent-color: #f7b2d9;
-        transform: scale(1.3);
-        margin-left: 10px;
+        accent-color: pink;
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
     }
-
+    .strike {
+        text-decoration: line-through;
+        opacity: 0.6;
+    }
+    .streak-ring {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 8px solid #f8a5c2;
+        border-top-color: #eee;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+        margin: auto;
+    }
     button {
-        background: #f7b2d9;
+        background: pink;
         border: none;
-        padding: 8px 14px;
+        padding: 8px;
         border-radius: 8px;
         cursor: pointer;
-        font-weight: 600;
-        color: white;
-    }
-
-    button:hover {
-        opacity: 0.85;
-    }
-
-    .streak {
-        margin-top: 15px;
-        font-weight: bold;
-        font-size: 16px;
-        background: #ffeaf5;
-        padding: 10px 18px;
-        border-radius: 20px;
-        color: #f7b2d9;
+        margin-top: 10px;
+        width: 100%;
     }
 </style>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-
-<h1>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Pink_bow.svg/1024px-Pink_bow.svg.png" alt="bow">
-    Habit Tracker
-</h1>
-
-<div id="habit-list"></div>
-<button id="add-habit">+ Add Habit</button>
-<div class="streak" id="streak-display">🔥 Streak: 0 days</div>
+<div class="widget">
+    <div class="header">
+        <span class="bow">🎀</span> <span>Daily Habits</span>
+    </div>
+    <div class="date-box" id="date"></div>
+    <div id="habits"></div>
+    <input type="text" id="newHabit" placeholder="Add new habit...">
+    <button onclick="addHabit()">Add Habit</button>
+    <div class="streak-box" id="best-streak"></div>
+    <div class="streak-ring" id="streak-ring">0 days</div>
+</div>
 
 <script>
-    const habitListEl = document.getElementById("habit-list");
-    const streakDisplay = document.getElementById("streak-display");
-
     let habits = JSON.parse(localStorage.getItem("habits")) || [];
     let streak = parseInt(localStorage.getItem("streak")) || 0;
-    let lastCompletedDate = localStorage.getItem("lastCompletedDate") || "";
+    let bestStreak = parseInt(localStorage.getItem("bestStreak")) || 0;
+    let lastDate = localStorage.getItem("lastDate") || "";
 
-    function saveData() {
-        localStorage.setItem("habits", JSON.stringify(habits));
-        localStorage.setItem("streak", streak);
-        localStorage.setItem("lastCompletedDate", lastCompletedDate);
+    function renderDate() {
+        document.getElementById("date").innerText = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
     }
 
     function renderHabits() {
-        habitListEl.innerHTML = "";
+        const container = document.getElementById("habits");
+        container.innerHTML = "";
         habits.forEach((habit, index) => {
-            const habitEl = document.createElement("div");
-            habitEl.className = "habit";
-
-            const textInput = document.createElement("input");
-            textInput.type = "text";
-            textInput.value = habit.text;
-            textInput.oninput = e => {
-                habits[index].text = e.target.value;
-                saveData();
-            };
-
+            const div = document.createElement("div");
+            div.className = "habit";
             const checkbox = document.createElement("input");
             checkbox.type = "checkbox";
             checkbox.checked = habit.done;
-            checkbox.onchange = () => {
-                habits[index].done = checkbox.checked;
-                checkCompletion();
-                saveData();
-            };
-
-            habitEl.appendChild(textInput);
-            habitEl.appendChild(checkbox);
-            habitListEl.appendChild(habitEl);
+            checkbox.onchange = () => toggleHabit(index);
+            const label = document.createElement("span");
+            label.textContent = habit.name;
+            if (habit.done) label.classList.add("strike");
+            div.appendChild(checkbox);
+            div.appendChild(label);
+            container.appendChild(div);
         });
     }
 
-    function addHabit(text = "") {
-        habits.push({ text, done: false });
-        saveData();
+    function toggleHabit(index) {
+        habits[index].done = !habits[index].done;
+        localStorage.setItem("habits", JSON.stringify(habits));
         renderHabits();
     }
 
-    function checkCompletion() {
-        if (habits.length > 0 && habits.every(h => h.done)) {
-            const today = new Date().toLocaleDateString();
-            if (lastCompletedDate !== today) {
-                streak++;
-                lastCompletedDate = today;
-                saveData();
-            }
-        }
-        updateStreakDisplay();
+    function addHabit() {
+        const input = document.getElementById("newHabit");
+        if (input.value.trim() === "") return;
+        habits.push({ name: input.value.trim(), done: false });
+        localStorage.setItem("habits", JSON.stringify(habits));
+        input.value = "";
+        streak = 0; // reset streak on habit addition
+        saveProgress();
+        renderHabits();
+        renderStreak();
     }
 
-    function updateStreakDisplay() {
-        streakDisplay.textContent = `🔥 Streak: ${streak} day${streak !== 1 ? 's' : ''}`;
+    function renderStreak() {
+        document.getElementById("streak-ring").innerText = `${streak} days`;
+        document.getElementById("best-streak").innerText = `Your best streak is ${bestStreak} days`;
     }
 
-    // Reset streak if missed a day
-    function checkForMissedDay() {
-        const today = new Date().toLocaleDateString();
-        if (lastCompletedDate && lastCompletedDate !== today) {
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            if (lastCompletedDate !== yesterday.toLocaleDateString()) {
+    function saveProgress() {
+        localStorage.setItem("habits", JSON.stringify(habits));
+        localStorage.setItem("streak", streak);
+        localStorage.setItem("bestStreak", bestStreak);
+        localStorage.setItem("lastDate", lastDate);
+    }
+
+    function checkDayChange() {
+        let today = new Date().toDateString();
+        if (lastDate && lastDate !== today) {
+            if (habits.length === 0 || !habits.every(h => h.done)) {
                 streak = 0;
-                saveData();
+            } else {
+                streak++;
+                if (streak > bestStreak) bestStreak = streak;
             }
+            habits.forEach(h => h.done = false);
         }
+        lastDate = today;
+        saveProgress();
     }
 
-    document.getElementById("add-habit").onclick = () => addHabit();
-
-    checkForMissedDay();
+    renderDate();
+    checkDayChange();
     renderHabits();
-    updateStreakDisplay();
+    renderStreak();
 </script>
-
 </body>
 </html>
