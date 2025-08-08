@@ -1,236 +1,317 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Daily Habits</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    * {
-      font-family: 'Poppins', sans-serif;
-      box-sizing: border-box;
-    }
-    body {
-      background: #fff;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-    }
-    .container {
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      padding: 30px;
-      max-width: 800px;
-      width: 100%;
-      display: grid;
-      grid-template-columns: 1fr 250px;
-      gap: 50px;
-    }
-    h1 {
-      font-weight: 700;
-      font-size: 1.6rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 25px;
-    }
-    h1 span {
-      font-size: 1.6rem;
-    }
-    .habit-list {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-    .habit {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .habit input[type="checkbox"] {
-      appearance: none;
-      width: 22px;
-      height: 22px;
-      border-radius: 4px;
-      border: 2px solid #f8a9b6;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-    .habit input[type="checkbox"]:checked {
-      background-color: #f8a9b6;
-      border-color: #f8a9b6;
-      color: white;
-    }
-    .habit input[type="checkbox"]:checked::after {
-      content: "✓";
-      color: white;
-      font-size: 14px;
-    }
-    .habit span {
-      font-size: 1rem;
-    }
-    .habit span.checked {
-      text-decoration: line-through;
-      color: #999;
-    }
-    .delete-btn {
-      cursor: pointer;
-      border: none;
-      background: none;
-      font-size: 18px;
-    }
-    .add-section {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 25px;
-    }
-    .add-section input {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 0.95rem;
-    }
-    .add-section button {
-      background: #f8a9b6;
-      border: none;
-      padding: 10px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    .right-panel {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      align-items: center;
-    }
-    .date-box, .best-streak {
-      border: 2px solid #ddd;
-      padding: 10px 15px;
-      border-radius: 10px;
-      font-weight: 600;
-      text-align: center;
-      font-size: 1rem;
-    }
-    .streak-ring {
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      border: 10px solid #f8a9b6;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      font-size: 1rem;
-      color: black;
-    }
-    @media (max-width: 700px) {
-      .container {
-        grid-template-columns: 1fr;
-        gap: 30px;
-      }
-      .right-panel {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daily Habits</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Resets and Base Styles */
+        * {
+            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
+            margin: 0; /* Add margin reset for better consistency */
+            padding: 0; /* Add padding reset */
+        }
+        body {
+            background: #f0f2f5; /* A very light grey background, more subtle than pure white */
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to start vertically, or center if preferred for full page */
+            min-height: 100vh; /* Ensure body takes full height for centering */
+        }
+        .container {
+            background: white;
+            border-radius: 16px;
+            /* Adjusted shadow for a softer, more subtle look */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Increased blur and spread */
+            padding: 35px 40px; /* Slightly more padding for a roomier feel */
+            max-width: 850px; /* Adjusted max-width to match overall perceived width */
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 280px; /* Adjusted right panel width for more space */
+            gap: 60px; /* Increased gap between left and right sections */
+        }
+        h1 {
+            font-weight: 700;
+            font-size: 1.8rem; /* Slightly larger heading */
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Increased gap for icon */
+            margin-bottom: 30px; /* More space below the heading */
+            color: #333; /* Slightly darker text for contrast */
+        }
+        h1 span {
+            font-size: 2rem; /* Make the emoji slightly larger */
+        }
+        .habit-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px; /* Slightly more gap between habits */
+        }
+        .habit {
+            display: flex;
+            align-items: center;
+            gap: 12px; /* Adjusted gap for checkbox and text */
+        }
+        .habit input[type="checkbox"] {
+            appearance: none;
+            width: 24px; /* Slightly larger checkbox */
+            height: 24px; /* Slightly larger checkbox */
+            border-radius: 6px; /* Slightly more rounded corners */
+            border: 2px solid #ff9db4; /* Slightly more vibrant pink border */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0; /* Prevent checkbox from shrinking */
+        }
+        .habit input[type="checkbox"]:checked {
+            background-color: #ff9db4; /* Slightly more vibrant pink for checked state */
+            border-color: #ff9db4;
+            color: white;
+        }
+        .habit input[type="checkbox"]:checked::after {
+            content: "✓";
+            color: white;
+            font-size: 16px; /* Larger checkmark */
+            font-weight: 700; /* Bolder checkmark */
+        }
+        .habit span {
+            font-size: 1.05rem; /* Slightly larger text */
+            color: #444; /* Slightly darker text */
+            line-height: 1.4; /* Improve readability */
+        }
+        .habit span.checked {
+            text-decoration: line-through;
+            color: #999;
+        }
+        .delete-btn {
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 20px; /* Slightly larger trash icon */
+            margin-left: auto; /* Pushes the delete button to the right */
+            color: #bbb; /* Softer color for the trash icon */
+            transition: color 0.2s ease;
+        }
+        .delete-btn:hover {
+            color: #ff6b8b; /* Pinker on hover */
+        }
+        .add-section {
+            display: flex;
+            /* Changed to row for input and button side-by-side as in image */
+            flex-direction: row;
+            gap: 15px; /* Gap between input and button */
+            margin-top: 30px; /* More space above add section */
+            align-items: center; /* Align items vertically */
+        }
+        .add-section input {
+            padding: 12px 15px; /* More padding for input */
+            border: 1px solid #ddd; /* Lighter border */
+            border-radius: 10px; /* More rounded corners */
+            font-size: 1rem; /* Standard font size */
+            flex-grow: 1; /* Allow input to take available space */
+            outline: none; /* Remove default outline */
+            transition: border-color 0.2s ease;
+        }
+        .add-section input:focus {
+            border-color: #ff9db4; /* Pink border on focus */
+        }
+        .add-section button {
+            background: #ff9db4; /* More vibrant pink button */
+            color: white; /* White text for button */
+            border: none;
+            padding: 12px 25px; /* More padding for button */
+            border-radius: 10px; /* More rounded corners */
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            white-space: nowrap; /* Prevent button text from wrapping */
+            transition: background 0.2s ease, transform 0.1s ease;
+        }
+        .add-section button:hover {
+            background: #ff7aa0; /* Darker pink on hover */
+            transform: translateY(-1px); /* Slight lift on hover */
+        }
+        .add-section button:active {
+            transform: translateY(0); /* Press effect */
+        }
+
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 25px; /* Slightly more space between right panel elements */
+            align-items: center;
+        }
+        .date-box, .best-streak {
+            border: 2px solid #eee; /* Lighter border */
+            padding: 12px 20px; /* More padding */
+            border-radius: 12px; /* More rounded */
+            font-weight: 600;
+            text-align: center;
+            font-size: 1rem;
+            color: #555; /* Softer text color */
+            width: 100%; /* Ensure they take full width in the panel */
+        }
+        .streak-ring {
+            width: 160px; /* Slightly larger ring */
+            height: 160px; /* Slightly larger ring */
+            border-radius: 50%;
+            border: 12px solid #ff9db4; /* Thicker, more vibrant pink border */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.1rem; /* Slightly larger text inside ring */
+            color: black;
+            opacity: 0; /* Initially hidden */
+            transform: scale(0.8); /* Slightly smaller to animate in */
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* Smooth transition */
+        }
+
+        .streak-ring.visible {
+            opacity: 1; /* Visible when class is added */
+            transform: scale(1); /* Animate to full size */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) { /* Adjusted breakpoint for better tablet support */
+            .container {
+                grid-template-columns: 1fr;
+                gap: 40px; /* Reduce gap for smaller screens */
+                padding: 25px 30px; /* Adjust padding */
+            }
+            .right-panel {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px; /* Smaller gap when in a row */
+            }
+            .date-box, .best-streak {
+                flex-grow: 1; /* Allow them to grow in row layout */
+                max-width: unset; /* Remove max-width if any */
+            }
+            .add-section {
+                flex-direction: column; /* Stack input and button on small screens */
+                gap: 10px;
+            }
+            .add-section input, .add-section button {
+                width: 100%; /* Full width for stacked elements */
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Left side -->
-    <div>
-      <h1><span>🎀</span> Daily Habits</h1>
-      <div class="habit-list" id="habitList"></div>
-      <div class="add-section">
-        <input type="text" id="newHabit" placeholder="Add new habit...">
-        <button onclick="addHabit()">Add Habit</button>
-      </div>
+    <div class="container">
+        <div>
+            <h1><span>🎀</span> Daily Habits</h1>
+            <div class="habit-list" id="habitList"></div>
+            <div class="add-section">
+                <input type="text" id="newHabit" placeholder="Add new habit...">
+                <button onclick="addHabit()">Add Habit</button>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="date-box" id="dateBox"></div>
+            <div class="best-streak" id="bestStreakBox">Your best streak is 0 days</div>
+            <div class="streak-ring" id="streakRing">0 days streak</div>
+        </div>
     </div>
 
-    <!-- Right side -->
-    <div class="right-panel">
-      <div class="date-box" id="dateBox"></div>
-      <div class="best-streak" id="bestStreakBox">Your best streak is 0 days</div>
-      <div class="streak-ring" id="streakRing">0 days streak</div>
-    </div>
-  </div>
+    <script>
+        let habits = JSON.parse(localStorage.getItem('habits') || '[]');
+        let streak = parseInt(localStorage.getItem('streak') || '0');
+        let bestStreak = parseInt(localStorage.getItem('bestStreak') || '0');
+        let lastDate = localStorage.getItem('lastDate');
 
-  <script>
-    let habits = JSON.parse(localStorage.getItem('habits') || '[]');
-    let streak = parseInt(localStorage.getItem('streak') || '0');
-    let bestStreak = parseInt(localStorage.getItem('bestStreak') || '0');
-    let lastDate = localStorage.getItem('lastDate');
+        function renderHabits() {
+            const habitList = document.getElementById('habitList');
+            habitList.innerHTML = '';
+            habits.forEach((habit, index) => {
+                const habitDiv = document.createElement('div');
+                habitDiv.className = 'habit';
+                habitDiv.innerHTML = `
+                    <input type="checkbox" ${habit.checked ? 'checked' : ''} onchange="toggleHabit(${index})">
+                    <span class="${habit.checked ? 'checked' : ''}">${habit.name}</span>
+                    <button class="delete-btn" onclick="deleteHabit(${index})">🗑️</button>
+                `;
+                habitList.appendChild(habitDiv);
+            });
+            document.getElementById('streakRing').textContent = `${streak} days streak`;
+            document.getElementById('bestStreakBox').textContent = `Your best streak is ${bestStreak} days`;
 
-    function renderHabits() {
-      const habitList = document.getElementById('habitList');
-      habitList.innerHTML = '';
-      habits.forEach((habit, index) => {
-        const habitDiv = document.createElement('div');
-        habitDiv.className = 'habit';
-        habitDiv.innerHTML = `
-          <input type="checkbox" ${habit.checked ? 'checked' : ''} onchange="toggleHabit(${index})">
-          <span class="${habit.checked ? 'checked' : ''}">${habit.name}</span>
-          <button class="delete-btn" onclick="deleteHabit(${index})">🗑️</button>
-        `;
-        habitList.appendChild(habitDiv);
-      });
-      document.getElementById('streakRing').textContent = `${streak} days streak`;
-      document.getElementById('bestStreakBox').textContent = `Your best streak is ${bestStreak} days`;
-    }
+            // Streak ring visibility logic
+            const streakRing = document.getElementById('streakRing');
+            const allHabitsCompleted = habits.length > 0 && habits.every(habit => habit.checked);
 
-    function addHabit() {
-      const habitName = document.getElementById('newHabit').value.trim();
-      if (habitName) {
-        habits.push({ name: habitName, checked: false });
-        document.getElementById('newHabit').value = '';
-        saveHabits();
-      }
-    }
-
-    function deleteHabit(index) {
-      habits.splice(index, 1);
-      streak = 0;
-      saveHabits();
-    }
-
-    function toggleHabit(index) {
-      habits[index].checked = !habits[index].checked;
-      saveHabits();
-    }
-
-    function saveHabits() {
-      localStorage.setItem('habits', JSON.stringify(habits));
-      localStorage.setItem('streak', streak);
-      localStorage.setItem('bestStreak', bestStreak);
-      renderHabits();
-    }
-
-    function checkStreak() {
-      const today = new Date().toDateString();
-      if (lastDate !== today) {
-        if (lastDate && habits.every(habit => habit.checked)) {
-          streak++;
-          if (streak > bestStreak) bestStreak = streak;
-        } else if (lastDate) {
-          streak = 0;
+            if (allHabitsCompleted) {
+                streakRing.classList.add('visible');
+            } else {
+                streakRing.classList.remove('visible');
+            }
         }
-        habits = habits.map(h => ({ ...h, checked: false }));
-        lastDate = today;
-        localStorage.setItem('lastDate', lastDate);
-        saveHabits();
-      }
-    }
 
-    document.getElementById('dateBox').textContent = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-    checkStreak();
-    renderHabits();
-  </script>
+        function addHabit() {
+            const newHabitInput = document.getElementById('newHabit');
+            const habitName = newHabitInput.value.trim();
+            if (habitName) {
+                habits.push({ name: habitName, checked: false });
+                newHabitInput.value = ''; // Clear input field
+                saveHabits();
+            }
+        }
+
+        function deleteHabit(index) {
+            habits.splice(index, 1);
+            // If you delete a habit, it might be reasonable to break the current streak
+            // if that habit was part of a successful daily completion.
+            // For now, keeping your original logic of resetting streak to 0.
+            streak = 0; 
+            saveHabits();
+        }
+
+        function toggleHabit(index) {
+            habits[index].checked = !habits[index].checked;
+            saveHabits(); // Save and re-render to update UI and streak ring
+        }
+
+        function saveHabits() {
+            localStorage.setItem('habits', JSON.stringify(habits));
+            localStorage.setItem('streak', streak);
+            localStorage.setItem('bestStreak', bestStreak);
+            renderHabits(); // Always re-render to reflect changes
+        }
+
+        function checkStreak() {
+            const today = new Date().toDateString();
+            if (lastDate !== today) {
+                // Check if all habits were completed yesterday (or the last tracked day)
+                // This check applies to the habits *as they were before resetting for today*.
+                const wereAllHabitsCheckedYesterday = habits.every(habit => habit.checked);
+
+                if (lastDate && wereAllHabitsCheckedYesterday && habits.length > 0) {
+                    streak++;
+                    if (streak > bestStreak) {
+                        bestStreak = streak;
+                    }
+                } else if (lastDate) { // If it's a new day and not all habits were checked last time
+                    streak = 0;
+                }
+                // Reset all habits for the new day
+                habits = habits.map(h => ({ ...h, checked: false }));
+                lastDate = today;
+                localStorage.setItem('lastDate', lastDate);
+                saveHabits(); // Save state after checking streak and resetting for new day
+            }
+        }
+
+        // Initialize display on page load
+        document.getElementById('dateBox').textContent = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        checkStreak(); // Perform streak check and update on load
+        renderHabits(); // Initial render of habits and streak display
+    </script>
 </body>
 </html>
