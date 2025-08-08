@@ -15,22 +15,26 @@
         }
         body {
             background: #f0f2f5;
-            padding: 20px;
+            /* Removed padding here initially, will handle within container or media query */
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
+            /* Allow scrolling on body only if necessary, but ideally contain content */
+            overflow-x: hidden; /* Hide horizontal scrollbar if it appears on body */
         }
         .container {
             background: white;
             border-radius: 16px;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-            padding: 35px 40px;
+            padding: 35px 40px; /* Default wide screen padding */
             max-width: 850px;
-            width: 100%;
+            width: 100%; /* Ensure it takes full width up to max-width */
             display: grid;
             grid-template-columns: 1fr 280px; /* Default wide screen layout */
             gap: 60px;
+            margin: 20px; /* Add some margin around the container for general desktop view */
+            overflow: hidden; /* Ensure content inside container doesn't overflow itself */
         }
         h1 {
             font-weight: 700;
@@ -204,60 +208,73 @@
         }
 
         /* --- Responsive adjustments for Notion embeds and small screens --- */
-        /* This breakpoint targets scenarios where horizontal space is limited */
-        @media (max-width: 600px) { /* Adjusted breakpoint for more aggressive stacking */
+        /* More aggressive breakpoint for very narrow embeds (e.g., Notion) */
+        @media (max-width: 500px) { /* Lowered breakpoint */
             .container {
                 grid-template-columns: 1fr; /* Stack into a single column */
-                gap: 30px; /* Reduced gap */
-                padding: 20px 25px; /* Reduced padding for more compact look */
-                max-width: 100%; /* Allow it to take full available width in embed */
+                gap: 20px; /* Even smaller gap */
+                padding: 15px 15px; /* Reduced padding */
+                margin: 0; /* Remove body margin as it's within Notion embed */
+                border-radius: 0; /* Optional: make corners sharp if Notion embed has sharp corners */
+                box-shadow: none; /* Optional: remove shadow if Notion adds its own border/shadow */
             }
             .right-panel {
                 flex-direction: column; /* Ensure right panel items stack vertically */
-                flex-wrap: nowrap; /* Prevent wrapping into a row for internal elements */
+                flex-wrap: nowrap;
                 justify-content: center;
-                align-items: center; /* Center items within the column */
-                gap: 20px; /* Adjusted gap for stacked right panel */
+                align-items: center;
+                gap: 15px; /* Adjusted gap for stacked right panel */
             }
             .date-box, .best-streak {
-                width: 100%; /* Ensure they take full width of the container */
-                max-width: 250px; /* Give them a reasonable max-width if parent is very wide */
+                width: 100%;
+                max-width: 250px; /* Keep a max-width to prevent stretching too wide */
             }
             .streak-ring {
-                width: 140px; /* Slightly smaller ring if needed on very small screens */
-                height: 140px;
+                width: 120px; /* Make ring even smaller for very narrow views */
+                height: 120px;
             }
             #streakText {
-                font-size: 1rem; /* Adjust text size if ring is smaller */
+                font-size: 0.9rem; /* Adjust text size inside smaller ring */
             }
 
             .add-section {
-                flex-direction: column; /* Stack input and button */
+                flex-direction: column; /* Always stack input and button */
                 gap: 10px;
             }
             .add-section input, .add-section button {
-                width: 100%; /* Full width for stacked elements */
+                width: 100%;
+            }
+
+            /* Adjust header size for very small screens */
+            h1 {
+                font-size: 1.5rem;
+                margin-bottom: 20px;
+            }
+            h1 span {
+                font-size: 1.7rem;
+            }
+            .habit span {
+                font-size: 1rem;
             }
         }
 
-        /* Keep the original 768px breakpoint for general tablet support, but the 600px will likely hit first in Notion */
-        @media (max-width: 768px) {
+        /* General tablet support (less aggressive, will be overridden by 500px for Notion embed) */
+        @media (min-width: 501px) and (max-width: 768px) {
             .container {
-                /* This will be overridden by 600px for truly small embeds, but good for general tablets */
                 grid-template-columns: 1fr;
-                gap: 40px;
-                padding: 25px 30px;
+                gap: 30px;
+                padding: 20px 25px;
+                margin: 15px; /* A little margin for general tablet view */
             }
             .right-panel {
-                /* This is a fallback if somehow the 600px doesn't hit or the embed is wider */
-                flex-direction: row; /* This original setting might cause overflow if embed is between 600-768px */
+                flex-direction: row; /* Allow row layout on slightly wider tablets */
                 flex-wrap: wrap;
                 justify-content: center;
                 gap: 15px;
             }
             .date-box, .best-streak {
                 flex-grow: 1;
-                max-width: unset;
+                max-width: unset; /* Let them grow naturally in row layout */
             }
             .add-section {
                 flex-direction: column;
@@ -379,4 +396,57 @@
             }
         }
 
-        function saveHab
+        function saveHabits() {
+            if (habits.length === 0) {
+                streak = 0;
+            }
+
+            localStorage.setItem('habits', JSON.stringify(habits));
+            localStorage.setItem('streak', streak);
+            localStorage.setItem('bestStreak', bestStreak);
+            renderHabits();
+        }
+
+        function streakHasBeenIncrementedToday() {
+             const today = new Date().toDateString();
+             return localStorage.getItem('lastDate') === today && parseInt(localStorage.getItem('streak') || '0') >= 1;
+        }
+
+
+        function checkStreak() {
+            const today = new Date().toDateString();
+            if (lastDate !== today) {
+                const wereAllHabitsCheckedYesterday = habits.length > 0 && habits.every(habit => habit.checked);
+
+                if (lastDate && wereAllHabitsCheckedYesterday) {
+                    streak++;
+                    if (streak > bestStreak) {
+                        bestStreak = streak;
+                    }
+                } else if (lastDate) {
+                    streak = 0;
+                }
+
+                habits = habits.map(h => ({ ...h, checked: false }));
+                lastDate = today;
+                localStorage.setItem('lastDate', lastDate);
+                saveHabits();
+            } else {
+                const allHabitsCompletedForToday = habits.length > 0 && habits.every(habit => habit.checked);
+                if (allHabitsCompletedForToday && streak === 0) {
+                    streak = 1;
+                    if (streak > bestStreak) bestStreak = streak;
+                    localStorage.setItem('streak', streak);
+                    localStorage.setItem('bestStreak', bestStreak);
+                    localStorage.setItem('lastDate', today);
+                }
+            }
+        }
+
+        document.getElementById('dateBox').textContent = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+        checkStreak();
+        renderHabits();
+    </script>
+</body>
+</html>
