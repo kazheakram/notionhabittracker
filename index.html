@@ -12,22 +12,23 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            min-width: 0; /* Crucial: Ensure no element inherently demands a minimum width */
+            min-height: 0;
         }
 
-        /* --- CRITICAL: Ensure HTML and BODY are fully constrained for embeds --- */
+        /* --- CRITICAL: Ensure HTML and BODY are fully constrained and transparent for embeds --- */
         html, body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden; /* Hide any overflow on the document itself */
+            width: 100%; /* Take 100% of available space */
+            height: 100%; /* Take 100% of available space */
+            overflow: hidden; /* **THIS IS THE KEY** to hiding scrollbars for the document itself */
             display: flex; /* Use flexbox to center content */
             justify-content: center; /* Center horizontally */
             align-items: flex-start; /* Align content to the top */
-            background: transparent; /* Make body background transparent for Notion embed */
-            min-width: 0; /* Override any potential default min-width */
-            min-height: 0; /* Override any potential default min-height */
+            background: transparent !important; /* **CRUCIAL:** Make body background transparent, overriding any other background */
+            position: relative; /* Needed for some overflow scenarios */
         }
 
-        /* Adjust body background for standalone view only */
+        /* This background will ONLY show when opened directly in a browser, not in Notion */
         body {
             background: #f0f2f5;
         }
@@ -44,7 +45,7 @@
             gap: 60px;
             margin: 20px auto; /* Centered margin for general desktop view */
             overflow: hidden; /* Ensure content inside container doesn't overflow itself */
-            min-width: 280px; /* A reasonable minimum width for direct view */
+            min-width: 0; /* Allow container to shrink as much as possible by default */
         }
         h1 {
             font-weight: 700;
@@ -218,79 +219,90 @@
         }
 
         /* --- Responsive adjustments for Notion embeds (most aggressive) --- */
-        @media (max-width: 500px) { /* Lowered to 500px, adjust if your Notion embed is consistently smaller/larger */
+        /* This media query will be the primary one for Notion embeds. 
+           Adjust 450px if your Notion embed is consistently smaller/larger */
+        @media (max-width: 450px) { 
             .container {
-                grid-template-columns: 1fr; /* Stack into a single column */
-                gap: 10px; /* Very small gap */
-                padding: 10px; /* Minimal padding */
+                grid-template-columns: 1fr; /* Force single column layout */
+                gap: 8px; /* Extremely small gap */
+                padding: 5px; /* Minimal padding */
                 margin: 0; /* Remove all margins when in embed */
-                border-radius: 0; /* Optional: remove rounded corners */
-                box-shadow: none; /* Optional: remove shadow */
-                min-width: unset; /* Allow container to shrink to absolute minimum */
-                width: 100%; /* Ensure it takes full width of iframe */
+                border-radius: 0; /* Ensure no rounded corners */
+                box-shadow: none; /* Remove shadow */
+                width: 100%; /* Take full width of parent iframe */
+                overflow: hidden; /* Ensure container itself doesn't overflow */
             }
             /* Make sure the primary content area (left side) is responsive */
-            .container > div:first-child { /* Targets the left div containing habits and add section */
-                min-width: unset;
+            .container > div:first-child { 
                 width: 100%;
+                padding: 0; /* No padding on inner elements */
             }
 
             .right-panel {
-                flex-direction: column; /* Ensure right panel items stack vertically */
+                flex-direction: column; 
                 flex-wrap: nowrap;
                 justify-content: center;
                 align-items: center;
-                gap: 8px; /* Reduced gap */
+                gap: 5px; /* Extremely small gap */
+                width: 100%; /* Ensure panel takes full width */
+                padding: 0; /* No padding on inner elements */
             }
             .date-box, .best-streak {
-                width: calc(100% - 16px); /* 100% of parent minus 8px padding each side */
-                max-width: 180px; /* Tighter max-width for these boxes */
-                padding: 6px 8px; /* Reduced padding */
-                font-size: 0.8rem; /* Smaller font for small boxes */
+                width: calc(100% - 10px); /* Account for 5px padding on each side */
+                max-width: 160px; /* Tighter max-width for these boxes */
+                padding: 5px; /* Reduced padding */
+                font-size: 0.75rem; /* Smaller font for small boxes */
             }
             .streak-ring {
-                width: 90px; /* Make ring even smaller */
-                height: 90px;
+                width: 80px; /* Make ring even smaller */
+                height: 80px;
             }
             #streakText {
-                font-size: 0.7rem; /* Adjust text size inside smaller ring */
+                font-size: 0.65rem; /* Adjust text size inside smaller ring */
             }
             .add-section {
-                flex-direction: column; /* Always stack input and button */
-                gap: 6px; /* Reduced gap */
+                flex-direction: column;
+                gap: 5px; /* Reduced gap */
             }
             .add-section input, .add-section button {
-                width: 100%;
-                padding: 8px 10px; /* Smaller padding for input/button */
-                font-size: 0.85rem;
+                width: calc(100% - 10px); /* 100% minus padding */
+                padding: 6px; /* Smaller padding for input/button */
+                font-size: 0.8rem;
             }
             h1 {
-                font-size: 1.2rem; /* Even smaller header */
-                margin-bottom: 10px;
+                font-size: 1.1rem; /* Even smaller header */
+                margin-bottom: 8px;
+                gap: 5px;
             }
             h1 span {
-                font-size: 1.4rem;
+                font-size: 1.3rem;
+            }
+            .habit {
+                gap: 8px; /* Smaller gap for habit items */
             }
             .habit span {
-                font-size: 0.9rem; /* Smaller habit text */
+                font-size: 0.85rem; /* Smaller habit text */
             }
             .habit input[type="checkbox"] {
-                width: 18px; /* Even smaller checkbox */
-                height: 18px;
+                width: 16px; /* Even smaller checkbox */
+                height: 16px;
             }
             .habit input[type="checkbox"]:checked::after {
-                font-size: 12px;
+                font-size: 10px;
             }
             .delete-btn {
-                font-size: 16px; /* Smaller delete button */
+                font-size: 14px; /* Smaller delete button */
+            }
+            .habit-list {
+                gap: 10px; /* Smaller gap for habit list */
             }
         }
 
-        /* General tablet support (between 501px and 768px) */
-        @media (min-width: 501px) and (max-width: 768px) {
+        /* General tablet support (between 451px and 768px) */
+        @media (min-width: 451px) and (max-width: 768px) {
             .container {
                 grid-template-columns: 1fr;
-                gap: 25px; /* Slightly reduced gap */
+                gap: 20px; /* Slightly reduced gap */
                 padding: 15px 20px; /* Slightly reduced padding */
                 margin: 10px auto; /* Reduced margin */
             }
