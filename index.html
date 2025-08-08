@@ -13,16 +13,26 @@
             margin: 0;
             padding: 0;
         }
-        body {
-            background: #f0f2f5;
-            /* Removed padding here initially, will handle within container or media query */
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            /* Allow scrolling on body only if necessary, but ideally contain content */
-            overflow-x: hidden; /* Hide horizontal scrollbar if it appears on body */
+
+        /* --- CRITICAL: Ensure HTML and BODY are fully constrained for embeds --- */
+        html, body {
+            width: 100%; /* Take 100% of available space */
+            height: 100%; /* Take 100% of available space */
+            overflow: hidden; /* Hide any overflow on the document itself */
+            display: flex; /* Use flexbox to center content if needed */
+            justify-content: center; /* Center horizontally */
+            align-items: flex-start; /* Align content to the top */
+            background: transparent; /* Make body background transparent so Notion's background shows through */
+            min-width: 0; /* Override any potential default min-width */
+            min-height: 0; /* Override any potential default min-height */
         }
+
+        /* Adjust body background for standalone view */
+        body {
+            background: #f0f2f5; /* A very light grey background for when viewed directly */
+        }
+
+
         .container {
             background: white;
             border-radius: 16px;
@@ -35,6 +45,8 @@
             gap: 60px;
             margin: 20px; /* Add some margin around the container for general desktop view */
             overflow: hidden; /* Ensure content inside container doesn't overflow itself */
+            /* Add min-width to avoid collapsing too much on its own */
+            min-width: 300px; /* A reasonable minimum width to prevent layout breaking too early */
         }
         h1 {
             font-weight: 700;
@@ -208,44 +220,42 @@
         }
 
         /* --- Responsive adjustments for Notion embeds and small screens --- */
-        /* More aggressive breakpoint for very narrow embeds (e.g., Notion) */
-        @media (max-width: 500px) { /* Lowered breakpoint */
+        /* This media query will be the primary one for Notion embeds */
+        @media (max-width: 550px) { /* Adjusted breakpoint slightly for more flexibility */
             .container {
-                grid-template-columns: 1fr; /* Stack into a single column */
+                grid-template-columns: 1fr; /* Force single column layout */
                 gap: 20px; /* Even smaller gap */
-                padding: 15px 15px; /* Reduced padding */
-                margin: 0; /* Remove body margin as it's within Notion embed */
-                border-radius: 0; /* Optional: make corners sharp if Notion embed has sharp corners */
-                box-shadow: none; /* Optional: remove shadow if Notion adds its own border/shadow */
+                padding: 15px; /* Uniform padding on all sides */
+                margin: 0; /* No margin inside the embed */
+                border-radius: 0; /* Optional: remove rounded corners */
+                box-shadow: none; /* Optional: remove shadow */
+                min-width: unset; /* Allow container to shrink as much as possible */
             }
             .right-panel {
                 flex-direction: column; /* Ensure right panel items stack vertically */
                 flex-wrap: nowrap;
                 justify-content: center;
                 align-items: center;
-                gap: 15px; /* Adjusted gap for stacked right panel */
+                gap: 15px;
             }
             .date-box, .best-streak {
                 width: 100%;
-                max-width: 250px; /* Keep a max-width to prevent stretching too wide */
+                max-width: 200px; /* Make these even narrower if needed */
             }
             .streak-ring {
-                width: 120px; /* Make ring even smaller for very narrow views */
+                width: 120px;
                 height: 120px;
             }
             #streakText {
-                font-size: 0.9rem; /* Adjust text size inside smaller ring */
+                font-size: 0.9rem;
             }
-
             .add-section {
-                flex-direction: column; /* Always stack input and button */
+                flex-direction: column;
                 gap: 10px;
             }
             .add-section input, .add-section button {
                 width: 100%;
             }
-
-            /* Adjust header size for very small screens */
             h1 {
                 font-size: 1.5rem;
                 margin-bottom: 20px;
@@ -258,23 +268,23 @@
             }
         }
 
-        /* General tablet support (less aggressive, will be overridden by 500px for Notion embed) */
-        @media (min-width: 501px) and (max-width: 768px) {
+        /* General tablet support (between 551px and 768px) */
+        @media (min-width: 551px) and (max-width: 768px) {
             .container {
                 grid-template-columns: 1fr;
                 gap: 30px;
                 padding: 20px 25px;
-                margin: 15px; /* A little margin for general tablet view */
+                margin: 15px;
             }
             .right-panel {
-                flex-direction: row; /* Allow row layout on slightly wider tablets */
+                flex-direction: row;
                 flex-wrap: wrap;
                 justify-content: center;
                 gap: 15px;
             }
             .date-box, .best-streak {
                 flex-grow: 1;
-                max-width: unset; /* Let them grow naturally in row layout */
+                max-width: unset;
             }
             .add-section {
                 flex-direction: column;
