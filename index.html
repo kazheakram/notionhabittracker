@@ -10,78 +10,77 @@
         * {
             font-family: 'Poppins', sans-serif;
             box-sizing: border-box;
-            margin: 0; /* Add margin reset for better consistency */
-            padding: 0; /* Add padding reset */
+            margin: 0;
+            padding: 0;
         }
         body {
-            background: #f0f2f5; /* A very light grey background, more subtle than pure white */
+            background: #f0f2f5;
             padding: 20px;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Align to start vertically, or center if preferred for full page */
-            min-height: 100vh; /* Ensure body takes full height for centering */
+            align-items: flex-start;
+            min-height: 100vh;
         }
         .container {
             background: white;
             border-radius: 16px;
-            /* Adjusted shadow for a softer, more subtle look */
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Increased blur and spread */
-            padding: 35px 40px; /* Slightly more padding for a roomier feel */
-            max-width: 850px; /* Adjusted max-width to match overall perceived width */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            padding: 35px 40px;
+            max-width: 850px;
             width: 100%;
             display: grid;
-            grid-template-columns: 1fr 280px; /* Adjusted right panel width for more space */
-            gap: 60px; /* Increased gap between left and right sections */
+            grid-template-columns: 1fr 280px; /* Default wide screen layout */
+            gap: 60px;
         }
         h1 {
             font-weight: 700;
-            font-size: 1.8rem; /* Slightly larger heading */
+            font-size: 1.8rem;
             display: flex;
             align-items: center;
-            gap: 10px; /* Increased gap for icon */
-            margin-bottom: 30px; /* More space below the heading */
-            color: #333; /* Slightly darker text for contrast */
+            gap: 10px;
+            margin-bottom: 30px;
+            color: #333;
         }
         h1 span {
-            font-size: 2rem; /* Make the emoji slightly larger */
+            font-size: 2rem;
         }
         .habit-list {
             display: flex;
             flex-direction: column;
-            gap: 20px; /* Slightly more gap between habits */
+            gap: 20px;
         }
         .habit {
             display: flex;
             align-items: center;
-            gap: 12px; /* Adjusted gap for checkbox and text */
+            gap: 12px;
         }
         .habit input[type="checkbox"] {
             appearance: none;
-            width: 24px; /* Slightly larger checkbox */
-            height: 24px; /* Slightly larger checkbox */
-            border-radius: 6px; /* Slightly more rounded corners */
-            border: 2px solid #ff9db4; /* Slightly more vibrant pink border */
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            border: 2px solid #ff9db4;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            flex-shrink: 0; /* Prevent checkbox from shrinking */
+            flex-shrink: 0;
         }
         .habit input[type="checkbox"]:checked {
-            background-color: #ff9db4; /* Slightly more vibrant pink for checked state */
+            background-color: #ff9db4;
             border-color: #ff9db4;
             color: white;
         }
         .habit input[type="checkbox"]:checked::after {
             content: "✓";
             color: white;
-            font-size: 16px; /* Larger checkmark */
-            font-weight: 700; /* Bolder checkmark */
+            font-size: 16px;
+            font-weight: 700;
         }
         .habit span {
-            font-size: 1.05rem; /* Slightly larger text */
-            color: #444; /* Slightly darker text */
-            line-height: 1.4; /* Improve readability */
+            font-size: 1.05rem;
+            color: #444;
+            line-height: 1.4;
         }
         .habit span.checked {
             text-decoration: line-through;
@@ -91,81 +90,80 @@
             cursor: pointer;
             border: none;
             background: none;
-            font-size: 20px; /* Slightly larger trash icon */
-            margin-left: auto; /* Pushes the delete button to the right */
-            color: #bbb; /* Softer color for the trash icon */
+            font-size: 20px;
+            margin-left: auto;
+            color: #bbb;
             transition: color 0.2s ease;
         }
         .delete-btn:hover {
-            color: #ff6b8b; /* Pinker on hover */
+            color: #ff6b8b;
         }
         .add-section {
             display: flex;
-            /* Changed to row for input and button side-by-side as in image */
             flex-direction: row;
-            gap: 15px; /* Gap between input and button */
-            margin-top: 30px; /* More space above add section */
-            align-items: center; /* Align items vertically */
+            gap: 15px;
+            margin-top: 30px;
+            align-items: center;
         }
         .add-section input {
-            padding: 12px 15px; /* More padding for input */
-            border: 1px solid #ddd; /* Lighter border */
-            border-radius: 10px; /* More rounded corners */
-            font-size: 1rem; /* Standard font size */
-            flex-grow: 1; /* Allow input to take available space */
-            outline: none; /* Remove default outline */
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            flex-grow: 1;
+            outline: none;
             transition: border-color 0.2s ease;
         }
         .add-section input:focus {
-            border-color: #ff9db4; /* Pink border on focus */
+            border-color: #ff9db4;
         }
         .add-section button {
-            background: #ff9db4; /* More vibrant pink button */
-            color: white; /* White text for button */
+            background: #ff9db4;
+            color: white;
             border: none;
-            padding: 12px 25px; /* More padding for button */
-            border-radius: 10px; /* More rounded corners */
+            padding: 12px 25px;
+            border-radius: 10px;
             font-weight: 600;
             font-size: 1rem;
             cursor: pointer;
-            white-space: nowrap; /* Prevent button text from wrapping */
+            white-space: nowrap;
             transition: background 0.2s ease, transform 0.1s ease;
         }
         .add-section button:hover {
-            background: #ff7aa0; /* Darker pink on hover */
-            transform: translateY(-1px); /* Slight lift on hover */
+            background: #ff7aa0;
+            transform: translateY(-1px);
         }
         .add-section button:active {
-            transform: translateY(0); /* Press effect */
+            transform: translateY(0);
         }
 
         .right-panel {
             display: flex;
             flex-direction: column;
-            gap: 25px; /* Slightly more space between right panel elements */
+            gap: 25px;
             align-items: center;
         }
         .date-box, .best-streak {
-            border: 2px solid #eee; /* Lighter border */
-            padding: 12px 20px; /* More padding */
-            border-radius: 12px; /* More rounded */
+            border: 2px solid #eee;
+            padding: 12px 20px;
+            border-radius: 12px;
             font-weight: 600;
             text-align: center;
             font-size: 1rem;
-            color: #555; /* Softer text color */
-            width: 100%; /* Ensure they take full width in the panel */
+            color: #555;
+            width: 100%;
         }
 
         /* Streak Ring with Animated SVG Border */
         .streak-ring {
-            width: 160px; /* Control size of the whole component */
+            width: 160px;
             height: 160px;
-            border-radius: 50%; /* Still helps with overall shape, though SVG handles the main circle */
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative; /* For positioning SVG and text */
-            overflow: hidden; /* Important for clean rendering on some browsers */
+            position: relative;
+            overflow: hidden;
         }
 
         .streak-ring .streak-circle {
@@ -174,61 +172,99 @@
             left: 0;
             width: 100%;
             height: 100%;
-            /* Rotates the SVG coordinate system so the circle path starts at the top */
             transform: rotate(-90deg);
         }
 
         .streak-ring .circle-bg {
             fill: none;
-            stroke: #eee; /* Light gray background track for the circle */
-            stroke-width: 2.5; /* Width of the track */
+            stroke: #eee;
+            stroke-width: 2.5;
         }
 
         .streak-ring .circle-progress {
             fill: none;
-            stroke: #ff9db4; /* Pink progress line */
-            stroke-width: 2.5; /* Width of the progress line */
-            stroke-dasharray: 100; /* Represents the circumference of the circle in SVG units */
-            stroke-dashoffset: 100; /* Initially fully offset (hidden) */
-            transition: stroke-dashoffset 0.8s ease-out; /* Smooth transition for the drawing effect */
+            stroke: #ff9db4;
+            stroke-width: 2.5;
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            transition: stroke-dashoffset 0.8s ease-out;
         }
 
         .streak-ring.visible .circle-progress {
-            stroke-dashoffset: 0; /* Animates to 0 to "draw" the circle */
+            stroke-dashoffset: 0;
         }
 
-        #streakText { /* Style the new span for the text */
+        #streakText {
             font-weight: 600;
             font-size: 1.1rem;
             color: black;
-            z-index: 2; /* Ensure text is above SVG */
-            position: relative; /* Needed for z-index to work against absolute SVG */
-            text-align: center; /* Ensure text is centered horizontally */
+            z-index: 2;
+            position: relative;
+            text-align: center;
         }
 
-        /* Responsive adjustments */
-        @media (max-width: 768px) { /* Adjusted breakpoint for better tablet support */
+        /* --- Responsive adjustments for Notion embeds and small screens --- */
+        /* This breakpoint targets scenarios where horizontal space is limited */
+        @media (max-width: 600px) { /* Adjusted breakpoint for more aggressive stacking */
             .container {
-                grid-template-columns: 1fr;
-                gap: 40px; /* Reduce gap for smaller screens */
-                padding: 25px 30px; /* Adjust padding */
+                grid-template-columns: 1fr; /* Stack into a single column */
+                gap: 30px; /* Reduced gap */
+                padding: 20px 25px; /* Reduced padding for more compact look */
+                max-width: 100%; /* Allow it to take full available width in embed */
             }
             .right-panel {
-                flex-direction: row;
-                flex-wrap: wrap;
+                flex-direction: column; /* Ensure right panel items stack vertically */
+                flex-wrap: nowrap; /* Prevent wrapping into a row for internal elements */
                 justify-content: center;
-                gap: 15px; /* Smaller gap when in a row */
+                align-items: center; /* Center items within the column */
+                gap: 20px; /* Adjusted gap for stacked right panel */
             }
             .date-box, .best-streak {
-                flex-grow: 1; /* Allow them to grow in row layout */
-                max-width: unset; /* Remove max-width if any */
+                width: 100%; /* Ensure they take full width of the container */
+                max-width: 250px; /* Give them a reasonable max-width if parent is very wide */
             }
+            .streak-ring {
+                width: 140px; /* Slightly smaller ring if needed on very small screens */
+                height: 140px;
+            }
+            #streakText {
+                font-size: 1rem; /* Adjust text size if ring is smaller */
+            }
+
             .add-section {
-                flex-direction: column; /* Stack input and button on small screens */
+                flex-direction: column; /* Stack input and button */
                 gap: 10px;
             }
             .add-section input, .add-section button {
                 width: 100%; /* Full width for stacked elements */
+            }
+        }
+
+        /* Keep the original 768px breakpoint for general tablet support, but the 600px will likely hit first in Notion */
+        @media (max-width: 768px) {
+            .container {
+                /* This will be overridden by 600px for truly small embeds, but good for general tablets */
+                grid-template-columns: 1fr;
+                gap: 40px;
+                padding: 25px 30px;
+            }
+            .right-panel {
+                /* This is a fallback if somehow the 600px doesn't hit or the embed is wider */
+                flex-direction: row; /* This original setting might cause overflow if embed is between 600-768px */
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+            .date-box, .best-streak {
+                flex-grow: 1;
+                max-width: unset;
+            }
+            .add-section {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .add-section input, .add-section button {
+                width: 100%;
             }
         }
     </style>
@@ -266,7 +302,8 @@
                         stroke-dasharray="100, 100"
                         stroke-dashoffset="100"></path>
                 </svg>
-                <span id="streakText">0 days streak</span> </div>
+                <span id="streakText">0 days streak</span>
+            </div>
         </div>
     </div>
 
@@ -289,12 +326,11 @@
                 `;
                 habitList.appendChild(habitDiv);
             });
-            document.getElementById('streakText').textContent = `${streak} days streak`; 
+            document.getElementById('streakText').textContent = `${streak} days streak`;
             document.getElementById('bestStreakBox').textContent = `Your best streak is ${bestStreak} days`;
 
             const streakRing = document.getElementById('streakRing');
-            // FIX: Ensure streak ring only appears if there are habits AND they are all completed
-            const allHabitsCompleted = habits.length > 0 && habits.every(habit => habit.checked); 
+            const allHabitsCompleted = habits.length > 0 && habits.every(habit => habit.checked);
 
             if (allHabitsCompleted) {
                 streakRing.classList.add('visible');
@@ -308,102 +344,39 @@
             const habitName = newHabitInput.value.trim();
             if (habitName) {
                 habits.push({ name: habitName, checked: false });
-                newHabitInput.value = ''; // Clear input field
+                newHabitInput.value = '';
                 saveHabits();
             }
         }
 
         function deleteHabit(index) {
             habits.splice(index, 1);
-            saveHabits(); 
+            saveHabits();
         }
 
         function toggleHabit(index) {
             habits[index].checked = !habits[index].checked;
-            saveHabits(); 
-            
-            const allHabitsCompletedForToday = habits.length > 0 && habits.every(habit => habit.checked); // FIX: Added habits.length > 0 check
+            saveHabits();
+
+            const allHabitsCompletedForToday = habits.length > 0 && habits.every(habit => habit.checked);
             const today = new Date().toDateString();
 
             if (allHabitsCompletedForToday) {
-                // Only increment streak if it's 0 (fresh start today) or it's a new day from last tracked completion
-                // and the streak hasn't been incremented already for today.
                 if (streak === 0 || (lastDate !== today && !streakHasBeenIncrementedToday())) {
-                    streak = 1; 
+                    streak = 1;
                     if (streak > bestStreak) {
                         bestStreak = streak;
                     }
                     localStorage.setItem('streak', streak);
                     localStorage.setItem('bestStreak', bestStreak);
-                    localStorage.setItem('lastDate', today); 
+                    localStorage.setItem('lastDate', today);
                 }
             } else {
-                 // If any habit becomes unchecked today, and we previously had a 1-day streak for today, reset it.
-                 // This ensures immediate feedback for unchecking.
                  if (lastDate === today && streak === 1) {
-                     streak = 0; 
+                     streak = 0;
                      localStorage.setItem('streak', streak);
                  }
             }
         }
 
-        function saveHabits() {
-            // Check if all habits have been deleted
-            if (habits.length === 0) {
-                streak = 0;
-                // Optionally, reset bestStreak here too if you want it to be 0 when no habits exist
-                // bestStreak = 0; 
-            }
-
-            localStorage.setItem('habits', JSON.stringify(habits));
-            localStorage.setItem('streak', streak); 
-            localStorage.setItem('bestStreak', bestStreak);
-            renderHabits(); 
-        }
-
-        function streakHasBeenIncrementedToday() {
-             const today = new Date().toDateString();
-             return localStorage.getItem('lastDate') === today && parseInt(localStorage.getItem('streak') || '0') >= 1;
-        }
-
-
-        function checkStreak() {
-            const today = new Date().toDateString();
-            if (lastDate !== today) {
-                // FIX: Ensure habits.length > 0 before checking previous day's completion for streak increment
-                const wereAllHabitsCheckedYesterday = habits.length > 0 && habits.every(habit => habit.checked); 
-
-                if (lastDate && wereAllHabitsCheckedYesterday) { // removed 'habits.length > 0' here as it's already in wereAllHabitsCheckedYesterday
-                    streak++; 
-                    if (streak > bestStreak) {
-                        bestStreak = streak;
-                    }
-                } else if (lastDate) { 
-                    streak = 0; 
-                }
-                
-                habits = habits.map(h => ({ ...h, checked: false }));
-                lastDate = today; 
-                localStorage.setItem('lastDate', lastDate);
-                saveHabits(); 
-            } else {
-                // FIX: Ensure habits.length > 0 before setting streak to 1 on current day
-                const allHabitsCompletedForToday = habits.length > 0 && habits.every(habit => habit.checked);
-                if (allHabitsCompletedForToday && streak === 0) {
-                    streak = 1;
-                    if (streak > bestStreak) bestStreak = streak;
-                    localStorage.setItem('streak', streak);
-                    localStorage.setItem('bestStreak', bestStreak);
-                    localStorage.setItem('lastDate', today); 
-                }
-            }
-        }
-
-        // Initialize display on page load
-        document.getElementById('dateBox').textContent = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-        
-        checkStreak(); 
-        renderHabits(); 
-    </script>
-</body>
-</html>
+        function saveHab
