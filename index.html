@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Habit Tracker Widget</title>
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: white;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h1 {
+        font-weight: 600;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    h1 img {
+        height: 30px;
+    }
+
+    .habit {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #ffeaf5;
+        padding: 10px 15px;
+        border-radius: 10px;
+        width: 280px;
+        margin: 6px 0;
+    }
+
+    input[type="checkbox"] {
+        accent-color: #f7b2d9;
+        transform: scale(1.3);
+        margin-left: 10px;
+    }
+
+    button {
+        background: #f7b2d9;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        color: white;
+    }
+
+    button:hover {
+        opacity: 0.85;
+    }
+
+    .streak {
+        margin-top: 15px;
+        font-weight: bold;
+        font-size: 16px;
+        background: #ffeaf5;
+        padding: 10px 18px;
+        border-radius: 20px;
+        color: #f7b2d9;
+    }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<h1>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Pink_bow.svg/1024px-Pink_bow.svg.png" alt="bow">
+    Habit Tracker
+</h1>
+
+<div id="habit-list"></div>
+<button id="add-habit">+ Add Habit</button>
+<div class="streak" id="streak-display">🔥 Streak: 0 days</div>
+
+<script>
+    const habitListEl = document.getElementById("habit-list");
+    const streakDisplay = document.getElementById("streak-display");
+
+    let habits = JSON.parse(localStorage.getItem("habits")) || [];
+    let streak = parseInt(localStorage.getItem("streak")) || 0;
+    let lastCompletedDate = localStorage.getItem("lastCompletedDate") || "";
+
+    function saveData() {
+        localStorage.setItem("habits", JSON.stringify(habits));
+        localStorage.setItem("streak", streak);
+        localStorage.setItem("lastCompletedDate", lastCompletedDate);
+    }
+
+    function renderHabits() {
+        habitListEl.innerHTML = "";
+        habits.forEach((habit, index) => {
+            const habitEl = document.createElement("div");
+            habitEl.className = "habit";
+
+            const textInput = document.createElement("input");
+            textInput.type = "text";
+            textInput.value = habit.text;
+            textInput.oninput = e => {
+                habits[index].text = e.target.value;
+                saveData();
+            };
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = habit.done;
+            checkbox.onchange = () => {
+                habits[index].done = checkbox.checked;
+                checkCompletion();
+                saveData();
+            };
+
+            habitEl.appendChild(textInput);
+            habitEl.appendChild(checkbox);
+            habitListEl.appendChild(habitEl);
+        });
+    }
+
+    function addHabit(text = "") {
+        habits.push({ text, done: false });
+        saveData();
+        renderHabits();
+    }
+
+    function checkCompletion() {
+        if (habits.length > 0 && habits.every(h => h.done)) {
+            const today = new Date().toLocaleDateString();
+            if (lastCompletedDate !== today) {
+                streak++;
+                lastCompletedDate = today;
+                saveData();
+            }
+        }
+        updateStreakDisplay();
+    }
+
+    function updateStreakDisplay() {
+        streakDisplay.textContent = `🔥 Streak: ${streak} day${streak !== 1 ? 's' : ''}`;
+    }
+
+    // Reset streak if missed a day
+    function checkForMissedDay() {
+        const today = new Date().toLocaleDateString();
+        if (lastCompletedDate && lastCompletedDate !== today) {
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            if (lastCompletedDate !== yesterday.toLocaleDateString()) {
+                streak = 0;
+                saveData();
+            }
+        }
+    }
+
+    document.getElementById("add-habit").onclick = () => addHabit();
+
+    checkForMissedDay();
+    renderHabits();
+    updateStreakDisplay();
+</script>
+
+</body>
+</html>
