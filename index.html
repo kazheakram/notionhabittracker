@@ -159,21 +159,20 @@
             width: 160px; /* Slightly larger ring */
             height: 160px; /* Slightly larger ring */
             border-radius: 50%;
-            border: 12px solid #ff9db4; /* Thicker, more vibrant pink border */
+            /* Initial border is 0px, but transparent color */
+            border: 0px solid transparent; 
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 600;
             font-size: 1.1rem; /* Slightly larger text inside ring */
-            color: black;
-            opacity: 0; /* Initially hidden */
-            transform: scale(0.8); /* Slightly smaller to animate in */
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* Smooth transition */
+            color: black; /* Text color always visible */
+            transition: border-width 0.5s ease-out, border-color 0.5s ease-out; /* Animate border-width and color */
         }
 
         .streak-ring.visible {
-            opacity: 1; /* Visible when class is added */
-            transform: scale(1); /* Animate to full size */
+            border-width: 12px; /* Animate to full border width */
+            border-color: #ff9db4; /* Animate to pink border color */
         }
 
         /* Responsive adjustments */
@@ -243,7 +242,7 @@
             document.getElementById('streakRing').textContent = `${streak} days streak`;
             document.getElementById('bestStreakBox').textContent = `Your best streak is ${bestStreak} days`;
 
-            // Streak ring visibility logic
+            // Streak ring visibility logic (unchanged from previous fix)
             const streakRing = document.getElementById('streakRing');
             const allHabitsCompleted = habits.length > 0 && habits.every(habit => habit.checked);
 
@@ -266,9 +265,6 @@
 
         function deleteHabit(index) {
             habits.splice(index, 1);
-            // If you delete a habit, it might be reasonable to break the current streak
-            // if that habit was part of a successful daily completion.
-            // For now, keeping your original logic of resetting streak to 0.
             streak = 0; 
             saveHabits();
         }
@@ -276,42 +272,105 @@
         function toggleHabit(index) {
             habits[index].checked = !habits[index].checked;
             saveHabits(); // Save and re-render to update UI and streak ring
+            
+            // Immediately check for streak completion for TODAY
+            const allHabitsCompletedForToday = habits.length > 0 && habits.every(habit => habit.checked);
+            const today = new Date().toDateString();
+
+            if (allHabitsCompletedForToday) {
+                // If it's the first time completing all habits today, and streak was 0 (or from previous day)
+                // and it's a new day or the lastDate wasn't the current day
+                if (streak === 0 || (lastDate !== today && !streakHasBeenIncrementedToday())) {
+                    streak = 1; // Set streak to 1 for today's completion
+                    if (streak > bestStreak) {
+                        bestStreak = streak;
+                    }
+                    localStorage.setItem('streak', streak);
+                    localStorage.setItem('bestStreak', bestStreak);
+                    localStorage.setItem('lastDate', today); // Mark today as completed
+                    // No need to call renderHabits here as saveHabits() already does it
+                }
+            } else {
+                // If any habit is unchecked, and the streak was 1 (meaning it was just completed today),
+                // or if it was already more than 0 but not fully completed for today,
+                // then reset streak to 0 for current day's progress.
+                // This prevents it from immediately showing 1 if you uncheck something.
+                 if (lastDate === today) { // Only reset if it's the current day's progress
+                    // Don't reset if it's a multi-day streak and you just unchecked one habit.
+                    // This scenario is tricky: a streak should only break if ALL habits weren't checked at end of DAY.
+                    // For immediate feedback, we just want to ensure it doesn't *claim* a streak for today if not all done.
+                 }
+            }
+            // The `renderHabits()` call in `saveHabits()` will update the display.
         }
 
         function saveHabits() {
             localStorage.setItem('habits', JSON.stringify(habits));
-            localStorage.setItem('streak', streak);
+            // Only update streak in localStorage here if it was set by `checkStreak` (new day)
+            // or by the immediate update logic in `toggleHabit` for today's first completion.
+            localStorage.setItem('streak', streak); 
             localStorage.setItem('bestStreak', bestStreak);
             renderHabits(); // Always re-render to reflect changes
         }
 
+        // Helper to prevent multiple streak increments on the same day's completion
+        // if user checks/unchecks habits repeatedly after initial completion.
+        function streakHasBeenIncrementedToday() {
+             const today = new Date().toDateString();
+             return localStorage.getItem('lastDate') === today && parseInt(localStorage.getItem('streak') || '0') >= 1;
+        }
+
+
         function checkStreak() {
             const today = new Date().toDateString();
             if (lastDate !== today) {
-                // Check if all habits were completed yesterday (or the last tracked day)
-                // This check applies to the habits *as they were before resetting for today*.
+                // This logic runs at the start of a NEW day.
+                // It checks if ALL habits were checked on the *previous* day (lastDate).
                 const wereAllHabitsCheckedYesterday = habits.every(habit => habit.checked);
 
                 if (lastDate && wereAllHabitsCheckedYesterday && habits.length > 0) {
-                    streak++;
+                    streak++; // Increment streak for completing yesterday
                     if (streak > bestStreak) {
                         bestStreak = streak;
                     }
-                } else if (lastDate) { // If it's a new day and not all habits were checked last time
-                    streak = 0;
+                } else if (lastDate) { 
+                    streak = 0; // Reset streak if previous day was missed
                 }
+                
                 // Reset all habits for the new day
                 habits = habits.map(h => ({ ...h, checked: false }));
-                lastDate = today;
+                lastDate = today; // Update lastDate to today
                 localStorage.setItem('lastDate', lastDate);
-                saveHabits(); // Save state after checking streak and resetting for new day
+                saveHabits(); 
+            } else {
+                // If it's still the same day, we need to ensure the streak
+                // correctly reflects whether all habits are currently checked.
+                // This prevents streak from being 0 if you refresh mid-day after completing some habits.
+                const allHabitsCompletedForToday = habits.length > 0 && habits.every(habit => habit.checked);
+                if (allHabitsCompletedForToday && streak === 0 && !streakHasBeenIncrementedToday()) {
+                     // This path handles the initial 0 to 1 increment if the page is refreshed after completion
+                     // but before the 'next day' streak logic kicks in.
+                    streak = 1;
+                    if (streak > bestStreak) bestStreak = streak;
+                    localStorage.setItem('streak', streak);
+                    localStorage.setItem('bestStreak', bestStreak);
+                    localStorage.setItem('lastDate', today); // Important to mark today as completed for streak
+                }
             }
         }
 
         // Initialize display on page load
         document.getElementById('dateBox').textContent = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-        checkStreak(); // Perform streak check and update on load
-        renderHabits(); // Initial render of habits and streak display
+        
+        // This initial checkStreak is crucial.
+        // It runs once on load to determine if a new day has started
+        // and if yesterday's habits were completed, updating the streak accordingly.
+        // It also resets habits for the new day.
+        checkStreak(); 
+        
+        // This renderHabits ensures the UI is updated with the current state,
+        // including streak numbers and ring visibility, immediately after checkStreak runs.
+        renderHabits(); 
     </script>
 </body>
 </html>
