@@ -165,7 +165,6 @@
             align-items: center;
             justify-content: center;
             position: relative; /* For positioning SVG and text */
-            /* Remove old border/pseudo-element related styles from here */
             overflow: hidden; /* Important for clean rendering on some browsers */
         }
 
@@ -290,11 +289,9 @@
                 `;
                 habitList.appendChild(habitDiv);
             });
-            // Changed: Update the specific span for text
             document.getElementById('streakText').textContent = `${streak} days streak`; 
             document.getElementById('bestStreakBox').textContent = `Your best streak is ${bestStreak} days`;
 
-            // Streak ring visibility logic (controlling the 'visible' class on the parent div)
             const streakRing = document.getElementById('streakRing');
             const allHabitsCompleted = habits.length > 0 && habits.every(habit => habit.checked);
 
@@ -315,49 +312,52 @@
             }
         }
 
+        // Modified deleteHabit: No direct streak reset here
         function deleteHabit(index) {
             habits.splice(index, 1);
-            streak = 0; 
-            saveHabits();
+            saveHabits(); // Save the updated habits array
+            // The streak reset logic for all habits deleted will be in saveHabits
         }
 
         function toggleHabit(index) {
             habits[index].checked = !habits[index].checked;
             saveHabits(); // Save and re-render to update UI and streak ring
             
-            // Immediately check for streak completion for TODAY
             const allHabitsCompletedForToday = habits.length > 0 && habits.every(habit => habit.checked);
             const today = new Date().toDateString();
 
             if (allHabitsCompletedForToday) {
-                // If it's the first time completing all habits today, and streak was 0 (or from previous day)
-                // and it's a new day or the lastDate wasn't the current day
                 if (streak === 0 || (lastDate !== today && !streakHasBeenIncrementedToday())) {
-                    streak = 1; // Set streak to 1 for today's completion
+                    streak = 1; 
                     if (streak > bestStreak) {
                         bestStreak = streak;
                     }
                     localStorage.setItem('streak', streak);
                     localStorage.setItem('bestStreak', bestStreak);
-                    localStorage.setItem('lastDate', today); // Mark today as completed
+                    localStorage.setItem('lastDate', today); 
                 }
             } else {
-                 if (lastDate === today && streak === 1) { // If it's today and we just had a 1-day streak
-                     streak = 0; // Reset it if a habit becomes unchecked
+                 if (lastDate === today && streak === 1) {
+                     streak = 0; 
                      localStorage.setItem('streak', streak);
                  }
             }
         }
 
         function saveHabits() {
+            // Check if all habits have been deleted
+            if (habits.length === 0) {
+                streak = 0;
+                // Optionally, reset bestStreak here too if you want it to be 0 when no habits exist
+                // bestStreak = 0; 
+            }
+
             localStorage.setItem('habits', JSON.stringify(habits));
             localStorage.setItem('streak', streak); 
             localStorage.setItem('bestStreak', bestStreak);
             renderHabits(); // Always re-render to reflect changes
         }
 
-        // Helper to prevent multiple streak increments on the same day's completion
-        // if user checks/unchecks habits repeatedly after initial completion.
         function streakHasBeenIncrementedToday() {
              const today = new Date().toDateString();
              return localStorage.getItem('lastDate') === today && parseInt(localStorage.getItem('streak') || '0') >= 1;
@@ -370,12 +370,12 @@
                 const wereAllHabitsCheckedYesterday = habits.every(habit => habit.checked);
 
                 if (lastDate && wereAllHabitsCheckedYesterday && habits.length > 0) {
-                    streak++; // Increment streak for completing yesterday
+                    streak++; 
                     if (streak > bestStreak) {
                         bestStreak = streak;
                     }
                 } else if (lastDate) { 
-                    streak = 0; // Reset streak if previous day was missed
+                    streak = 0; 
                 }
                 
                 habits = habits.map(h => ({ ...h, checked: false }));
