@@ -191,8 +191,6 @@
   </div>
 
   <script>
-    // localStorage.removeItem('bestStreak'); // Uncomment to reset best streak permanently
-
     let habits = JSON.parse(localStorage.getItem('habits') || '[]');
     let streak = parseInt(localStorage.getItem('streak') || '0');
     let bestStreak = parseInt(localStorage.getItem('bestStreak') || '0');
@@ -235,7 +233,6 @@
       saveHabits();
 
       if (habits.every(h => h.checked)) {
-        // All habits done for today
         updateRing();
       }
     }
@@ -279,7 +276,7 @@
       const circumference = 2 * Math.PI * 60;
       const progress = bestStreak > 0 ? (streak / bestStreak) : 1;
       const offset = circumference - (progress * circumference);
-      
+
       requestAnimationFrame(() => {
         progressCircle.style.strokeDashoffset = offset;
       });
