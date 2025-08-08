@@ -1,177 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daily Habits</title>
-<style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Daily Habits</title>
+  <style>
     body {
-        font-family: Poppins, sans-serif;
-        background: #fff;
-        margin: 0;
-        padding: 20px;
+      font-family: Poppins, sans-serif;
+      background: #fff;
+      margin: 0;
+      padding: 20px;
     }
-
     .container {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        max-width: 900px;
-        margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
     }
-
-    h1 {
-        display: flex;
-        align-items: center;
-        font-size: 1.8rem;
-        font-weight: bold;
+    .title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
-
-    .habit-input {
-        display: flex;
-        margin-top: 10px;
-    }
-
     input {
-        flex: 1;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 10px;
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      width: 250px;
     }
-
     button {
-        background: pink;
-        border: none;
-        padding: 10px 20px;
-        margin-left: 10px;
-        border-radius: 10px;
-        font-weight: bold;
-        cursor: pointer;
+      background: pink;
+      color: black;
+      border: none;
+      padding: 10px;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 10px;
+      margin-top: 10px;
+      cursor: pointer;
     }
-
-    .stats {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
+    .streak-box {
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 20px;
     }
-
-    .date-box, .best-streak-box {
-        border: 2px solid #ddd;
-        padding: 10px 20px;
-        border-radius: 10px;
-        font-weight: bold;
-        text-align: center;
+    .streak-ring {
+      position: relative;
+      width: 150px;
+      height: 150px;
     }
-
-    .streak-container {
-        position: relative;
-        width: 150px;
-        height: 150px;
+    .streak-ring svg {
+      transform: rotate(-90deg);
     }
-
-    svg {
-        transform: rotate(-90deg);
-    }
-
-    .streak-bg {
-        stroke: #f0f0f0;
-    }
-
-    .streak-progress {
-        stroke: pink;
-        transition: stroke-dashoffset 1s ease;
-    }
-
     .streak-text {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-weight: bold;
-        text-align: center;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-weight: bold;
+      text-align: center;
     }
-</style>
+    .habits {
+      margin-top: 20px;
+    }
+    .habit {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .habit input[type="checkbox"] {
+      transform: scale(1.2);
+    }
+  </style>
 </head>
 <body>
 
 <div class="container">
-    <div>
-        <h1>🎀 Daily Habits</h1>
-        <div class="habit-input">
-            <input type="text" id="habitInput" placeholder="Add new habit...">
-            <button onclick="addHabit()">Add Habit</button>
-        </div>
-    </div>
-    <div class="stats">
-        <div class="date-box" id="dateBox"></div>
-        <div class="best-streak-box" id="bestStreakBox"></div>
+  <div>
+    <div class="title">🎀 Daily Habits</div>
+    <input id="habitInput" placeholder="Add new habit..."/>
+    <button onclick="addHabit()">Add Habit</button>
+    <div class="habits" id="habitsList"></div>
+  </div>
 
-        <!-- Donut Streak -->
-        <div class="streak-container" id="streakContainer" style="display:none;">
-            <svg width="150" height="150">
-                <circle class="streak-bg" cx="75" cy="75" r="70" stroke-width="10" fill="none"></circle>
-                <circle class="streak-progress" cx="75" cy="75" r="70" stroke-width="10" fill="none"
-                    stroke-linecap="round" stroke-dasharray="439.6" stroke-dashoffset="439.6"></circle>
-            </svg>
-            <div class="streak-text" id="streakText">0 days streak</div>
-        </div>
+  <div>
+    <div class="streak-box" id="dateBox"></div>
+    <div class="streak-box" id="bestStreakBox"></div>
+    <div class="streak-ring" id="streakRing" style="display: none;">
+      <svg width="150" height="150">
+        <circle cx="75" cy="75" r="70" stroke="#eee" stroke-width="10" fill="none"/>
+        <circle id="progressCircle" cx="75" cy="75" r="70" stroke="pink" stroke-width="10" fill="none"
+          stroke-linecap="round" stroke-dasharray="439.82" stroke-dashoffset="439.82"/>
+      </svg>
+      <div class="streak-text" id="streakText">0 days streak</div>
     </div>
+  </div>
 </div>
 
 <script>
-    const dateBox = document.getElementById("dateBox");
-    const bestStreakBox = document.getElementById("bestStreakBox");
-    const streakContainer = document.getElementById("streakContainer");
-    const streakProgress = document.querySelector(".streak-progress");
-    const streakText = document.getElementById("streakText");
+  const habitsListEl = document.getElementById("habitsList");
+  const streakRingEl = document.getElementById("streakRing");
+  const streakTextEl = document.getElementById("streakText");
+  const progressCircle = document.getElementById("progressCircle");
+  const bestStreakBox = document.getElementById("bestStreakBox");
 
-    let streak = parseInt(localStorage.getItem("streak") || "0");
-    let bestStreak = parseInt(localStorage.getItem("bestStreak") || "0");
+  let habits = JSON.parse(localStorage.getItem("habits") || "[]");
+  let streak = parseInt(localStorage.getItem("streak") || "0");
+  let bestStreak = parseInt(localStorage.getItem("bestStreak") || "0");
+  let lastDate = localStorage.getItem("lastDate");
 
-    // Set current date
-    const today = new Date();
-    dateBox.textContent = today.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-    });
+  // Show today's date
+  document.getElementById("dateBox").textContent =
+    new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 
-    // Update best streak display
-    bestStreakBox.textContent = `Your best streak is ${bestStreak} days`;
+  function saveData() {
+    localStorage.setItem("habits", JSON.stringify(habits));
+    localStorage.setItem("streak", streak);
+    localStorage.setItem("bestStreak", bestStreak);
+    localStorage.setItem("lastDate", lastDate);
+  }
 
-    // Show streak donut only if streak > 0
-    function updateStreakDonut() {
-        if (streak > 0) {
-            streakContainer.style.display = "block";
-            streakText.textContent = `${streak} days streak`;
-            const circumference = 2 * Math.PI * 70; // r=70
-            const progress = streak / bestStreak;
-            const offset = circumference - progress * circumference;
-            streakProgress.style.strokeDashoffset = offset;
-        } else {
-            streakContainer.style.display = "none";
-        }
+  function addHabit() {
+    const input = document.getElementById("habitInput");
+    const habit = { name: input.value, done: false };
+    if (habit.name.trim()) {
+      habits.push(habit);
+      input.value = "";
+      renderHabits();
+      saveData();
     }
+  }
 
-    updateStreakDonut();
+  function toggleHabit(index) {
+    habits[index].done = !habits[index].done;
+    renderHabits();
+    checkCompletion();
+    saveData();
+  }
 
-    // Example: Call this when all habits are completed
-    function completeDay() {
+  function checkCompletion() {
+    if (habits.length > 0 && habits.every(h => h.done)) {
+      if (lastDate !== new Date().toDateString()) {
         streak++;
-        if (streak > bestStreak) {
-            bestStreak = streak;
-            localStorage.setItem("bestStreak", bestStreak);
-            bestStreakBox.textContent = `Your best streak is ${bestStreak} days`;
-        }
-        localStorage.setItem("streak", streak);
-        updateStreakDonut();
+        lastDate = new Date().toDateString();
+        if (streak > bestStreak) bestStreak = streak;
+        animateRing();
+        saveData();
+      }
     }
+    renderStreak();
+  }
 
-    // Example habit add function
-    function addHabit() {
-        alert("Habit added (hook up your logic here)");
+  function animateRing() {
+    const ratio = streak / bestStreak;
+    const circumference = 2 * Math.PI * 70;
+    let offset = circumference;
+    let targetOffset = circumference - ratio * circumference;
+    let step = (offset - targetOffset) / 30;
+    let frame = 0;
+    streakRingEl.style.display = "block";
+    function animate() {
+      offset -= step;
+      progressCircle.setAttribute("stroke-dashoffset", offset);
+      frame++;
+      if (frame < 30) requestAnimationFrame(animate);
     }
+    animate();
+  }
+
+  function renderHabits() {
+    habitsListEl.innerHTML = "";
+    habits.forEach((habit, i) => {
+      const div = document.createElement("div");
+      div.className = "habit";
+      div.innerHTML = `<input type="checkbox" ${habit.done ? "checked" : ""} onchange="toggleHabit(${i})"/>${habit.name}`;
+      habitsListEl.appendChild(div);
+    });
+  }
+
+  function renderStreak() {
+    if (streak === 0) {
+      streakRingEl.style.display = "none";
+    } else {
+      streakRingEl.style.display = "block";
+      streakTextEl.textContent = `${streak} days streak`;
+      const ratio = streak / bestStreak;
+      const circumference = 2 * Math.PI * 70;
+      progressCircle.setAttribute("stroke-dasharray", circumference);
+      progressCircle.setAttribute("stroke-dashoffset", circumference - ratio * circumference);
+    }
+    bestStreakBox.textContent = `Your best streak is ${bestStreak} days`;
+  }
+
+  renderHabits();
+  renderStreak();
 </script>
 
 </body>
