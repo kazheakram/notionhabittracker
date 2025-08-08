@@ -3,256 +3,230 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Notion Habit Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<title>Daily Habits Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-    body {
-        font-family: 'Inter', sans-serif;
-        background: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    padding: 30px;
+  }
+  .container {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 30px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0px 2px 15px rgba(0,0,0,0.08);
+    padding: 25px;
+    max-width: 700px;
+    width: 100%;
+  }
+  .left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .habit {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .habit input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: pink;
+  }
+  .habit span {
+    font-size: 1rem;
+  }
+  .completed {
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+  .delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  .add-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .add-section input {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+  }
+  .add-section button {
+    background: pink;
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+  }
+  .info-box {
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 10px 20px;
+    text-align: center;
+    font-weight: 500;
+  }
+  .progress-ring {
+    width: 120px;
+    height: 120px;
+  }
+  .streak-text {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  @media (max-width: 600px) {
+    .container {
+      grid-template-columns: 1fr;
     }
-    .widget {
-        display: flex;
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        padding: 24px;
-        gap: 28px;
-        width: 520px;
+    .right-column {
+      align-items: flex-start;
     }
-    .left {
-        flex: 1;
-    }
-    .header {
-        font-size: 20px;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        margin-bottom: 16px;
-    }
-    .header .bow {
-        font-size: 22px;
-        margin-right: 8px;
-    }
-    .habit {
-        display: flex;
-        align-items: center;
-        margin-bottom: 14px;
-        justify-content: space-between;
-    }
-    .habit-name {
-        flex: 1;
-        margin-left: 10px;
-        font-size: 15px;
-    }
-    input[type="checkbox"] {
-        accent-color: #ffb6c1;
-        width: 18px;
-        height: 18px;
-        transition: all 0.25s ease;
-    }
-    .strike {
-        text-decoration: line-through;
-        opacity: 0.55;
-    }
-    .delete-btn {
-        background: none;
-        border: none;
-        color: #bbb;
-        cursor: pointer;
-        font-size: 15px;
-    }
-    .delete-btn:hover {
-        color: #ff8da1;
-    }
-    .right {
-        width: 160px;
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-        align-items: center;
-    }
-    .box {
-        border: 1.5px solid #ccc;
-        border-radius: 10px;
-        padding: 8px;
-        text-align: center;
-        width: 100%;
-        font-size: 14px;
-    }
-    .progress-ring {
-        width: 100px;
-        height: 100px;
-        transform: rotate(-90deg);
-    }
-    .progress-ring__circle {
-        fill: transparent;
-        stroke: #ffb6c1;
-        stroke-width: 8;
-        stroke-linecap: round;
-        transition: stroke-dashoffset 0.8s ease-in-out;
-    }
-    .progress-ring__bg {
-        fill: transparent;
-        stroke: #eee;
-        stroke-width: 8;
-    }
-    button.add-btn {
-        background: #ffb6c1;
-        border: none;
-        padding: 8px;
-        border-radius: 8px;
-        cursor: pointer;
-        margin-top: 8px;
-        width: 100%;
-        font-weight: 600;
-        font-size: 14px;
-        transition: background 0.2s ease;
-    }
-    button.add-btn:hover {
-        background: #ff8da1;
-    }
-    input#newHabit {
-        width: 100%;
-        padding: 6px;
-        margin-top: 8px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        font-size: 14px;
-    }
+  }
 </style>
 </head>
 <body>
-<div class="widget">
-    <div class="left">
-        <div class="header"><span class="bow">🎀</span> Daily Habits</div>
-        <div id="habits"></div>
-        <input type="text" id="newHabit" placeholder="Add new habit...">
-        <button class="add-btn" onclick="addHabit()">Add Habit</button>
+
+<div class="container">
+  <div class="left-column">
+    <h2>🎀 Daily Habits</h2>
+    <div id="habit-list"></div>
+    <div class="add-section">
+      <input type="text" id="new-habit" placeholder="Add new habit...">
+      <button onclick="addHabit()">Add Habit</button>
     </div>
-    <div class="right">
-        <div class="box" id="date"></div>
-        <div class="box" id="best-streak"></div>
-        <svg class="progress-ring" width="100" height="100">
-            <circle class="progress-ring__bg" r="45" cx="50" cy="50"/>
-            <circle class="progress-ring__circle" r="45" cx="50" cy="50"/>
-        </svg>
-        <div id="streak-label" style="font-size: 14px;"></div>
-    </div>
+  </div>
+  <div class="right-column">
+    <div class="info-box" id="date-box"></div>
+    <div class="info-box" id="best-streak-box">Your best streak is 0 days</div>
+    <svg class="progress-ring" viewBox="0 0 120 120">
+      <circle cx="60" cy="60" r="50" stroke="#f8d0d6" stroke-width="10" fill="transparent"/>
+      <circle id="progress-circle" cx="60" cy="60" r="50" stroke="pink" stroke-width="10" fill="transparent" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314"/>
+    </svg>
+    <div class="streak-text" id="current-streak-text">0 days streak</div>
+  </div>
 </div>
 
 <script>
-    const habitsEl = document.getElementById("habits");
-    let habits = JSON.parse(localStorage.getItem("habits")) || [];
-    let streak = parseInt(localStorage.getItem("streak")) || 0;
-    let bestStreak = parseInt(localStorage.getItem("bestStreak")) || 0;
-    let lastDate = localStorage.getItem("lastDate") || "";
+let habits = JSON.parse(localStorage.getItem('habits')) || [];
+let streak = parseInt(localStorage.getItem('streak')) || 0;
+let bestStreak = parseInt(localStorage.getItem('bestStreak')) || 0;
+let lastCompletedDate = localStorage.getItem('lastCompletedDate') || null;
 
-    const progressCircle = document.querySelector(".progress-ring__circle");
-    const radius = progressCircle.r.baseVal.value;
-    const circumference = 2 * Math.PI * radius;
-    progressCircle.style.strokeDasharray = circumference;
-    progressCircle.style.strokeDashoffset = circumference;
+function updateDate() {
+  const today = new Date();
+  document.getElementById('date-box').textContent = today.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+updateDate();
 
-    function setProgress(percent) {
-        const offset = circumference - (percent / 100) * circumference;
-        progressCircle.style.strokeDashoffset = offset;
-    }
+function saveData() {
+  localStorage.setItem('habits', JSON.stringify(habits));
+  localStorage.setItem('streak', streak);
+  localStorage.setItem('bestStreak', bestStreak);
+  localStorage.setItem('lastCompletedDate', lastCompletedDate);
+}
 
-    function renderDate() {
-        document.getElementById("date").innerText = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-    }
+function renderHabits() {
+  const list = document.getElementById('habit-list');
+  list.innerHTML = '';
+  habits.forEach((habit, index) => {
+    const div = document.createElement('div');
+    div.className = 'habit';
+    div.innerHTML = `
+      <input type="checkbox" ${habit.completed ? 'checked' : ''} onchange="toggleHabit(${index})">
+      <span class="${habit.completed ? 'completed' : ''}">${habit.name}</span>
+      <button class="delete-btn" onclick="deleteHabit(${index})">🗑️</button>
+    `;
+    list.appendChild(div);
+  });
+}
 
-    function renderHabits() {
-        habitsEl.innerHTML = "";
-        habits.forEach((habit, index) => {
-            const div = document.createElement("div");
-            div.className = "habit";
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.checked = habit.done;
-            checkbox.onchange = () => toggleHabit(index);
-            const label = document.createElement("span");
-            label.className = "habit-name";
-            label.textContent = habit.name;
-            if (habit.done) label.classList.add("strike");
-            const del = document.createElement("button");
-            del.className = "delete-btn";
-            del.innerHTML = "🗑";
-            del.onclick = () => deleteHabit(index);
-            div.appendChild(checkbox);
-            div.appendChild(label);
-            div.appendChild(del);
-            habitsEl.appendChild(div);
-        });
-    }
+function toggleHabit(index) {
+  habits[index].completed = !habits[index].completed;
+  checkStreak();
+  saveData();
+  renderHabits();
+  updateProgress();
+}
 
-    function toggleHabit(index) {
-        habits[index].done = !habits[index].done;
-        saveProgress();
-        renderHabits();
-        updateProgressRing();
-    }
-
-    function addHabit() {
-        const input = document.getElementById("newHabit");
-        if (!input.value.trim()) return;
-        habits.push({ name: input.value.trim(), done: false });
-        streak = 0; // reset streak
-        saveProgress();
-        input.value = "";
-        renderHabits();
-        updateProgressRing();
-    }
-
-    function deleteHabit(index) {
-        habits.splice(index, 1);
-        streak = 0; // reset streak
-        saveProgress();
-        renderHabits();
-        updateProgressRing();
-    }
-
-    function saveProgress() {
-        localStorage.setItem("habits", JSON.stringify(habits));
-        localStorage.setItem("streak", streak);
-        localStorage.setItem("bestStreak", bestStreak);
-        localStorage.setItem("lastDate", lastDate);
-    }
-
-    function updateProgressRing() {
-        let percent = bestStreak > 0 ? (streak / bestStreak) * 100 : 0;
-        if (streak === bestStreak && bestStreak > 0) {
-            percent = 100; // full ring
-        }
-        setProgress(percent);
-        document.getElementById("streak-label").innerText = `${streak} days streak`;
-        document.getElementById("best-streak").innerText = `Your best streak is ${bestStreak} days`;
-    }
-
-    function checkDayChange() {
-        let today = new Date().toDateString();
-        if (lastDate && lastDate !== today) {
-            if (habits.length === 0 || !habits.every(h => h.done)) {
-                streak = 0;
-            } else {
-                streak++;
-                if (streak > bestStreak) bestStreak = streak;
-            }
-            habits.forEach(h => h.done = false);
-        }
-        lastDate = today;
-        saveProgress();
-    }
-
-    renderDate();
-    checkDayChange();
+function addHabit() {
+  const input = document.getElementById('new-habit');
+  const name = input.value.trim();
+  if (name) {
+    habits.push({ name, completed: false });
+    input.value = '';
+    saveData();
     renderHabits();
-    updateProgressRing();
+  }
+}
+
+function deleteHabit(index) {
+  habits.splice(index, 1);
+  streak = 0;
+  bestStreak = Math.max(bestStreak, streak);
+  saveData();
+  renderHabits();
+  updateProgress();
+}
+
+function checkStreak() {
+  const today = new Date().toDateString();
+  if (habits.every(h => h.completed)) {
+    if (lastCompletedDate !== today) {
+      streak++;
+      lastCompletedDate = today;
+      if (streak > bestStreak) bestStreak = streak;
+    }
+  } else {
+    if (lastCompletedDate !== today) {
+      streak = 0;
+    }
+  }
+}
+
+function updateProgress() {
+  const circle = document.getElementById('progress-circle');
+  const fullCircumference = 314;
+  if (bestStreak === 0) {
+    circle.style.strokeDashoffset = fullCircumference;
+  } else if (streak >= bestStreak) {
+    circle.style.strokeDashoffset = 0;
+  } else {
+    const offset = fullCircumference - (streak / bestStreak) * fullCircumference;
+    circle.style.strokeDashoffset = offset;
+  }
+  document.getElementById('current-streak-text').textContent = `${streak} days streak`;
+  document.getElementById('best-streak-box').textContent = `Your best streak is ${bestStreak} days`;
+}
+
+renderHabits();
+updateProgress();
 </script>
+
 </body>
 </html>
